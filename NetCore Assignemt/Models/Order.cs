@@ -1,6 +1,6 @@
 ﻿namespace NetCore_Assignemt.Models
 {
-    public class Book
+    public class Order
     {
         public int Id { get; set; }
     }
