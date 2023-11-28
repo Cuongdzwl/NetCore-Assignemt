@@ -3,18 +3,28 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Facebook;
 
 using NetCore_Assignemt.Data;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
+
+const string CLOUD_CONNECTION_STRING = "Azure";
+const string LOCAL_CONNECTION_STRING = "DefaultConnection";
 // API Key
-string CONNECTION_STRING = "DefaultConnection";
+
 // Google
-string GOOGLE_CLIENT_SECRET = "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";
-string GOOGLE_CLIENT_ID = "1027305466602-6ta3futotkkv4646klci1r1bjj9agama.apps.googleusercontent.com";
+const string GOOGLE_CLIENT_SECRET = "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";
+const string GOOGLE_CLIENT_ID = "1027305466602-6ta3futotkkv4646klci1r1bjj9agama.apps.googleusercontent.com";
 // Facebook
+const string FACEBOOK_CLIENT_SECRET = "21bbfc0d23bb25d3ecd68f15f16f4c19";
+const string FACEBOOK_CLIENT_ID = "190652060774363";
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 var builder = WebApplication.CreateBuilder(args);
 
+var conn = CLOUD_CONNECTION_STRING;
+
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString(CONNECTION_STRING) ?? throw new InvalidOperationException("Connection string '"+ CONNECTION_STRING + "' not found.");
+var connectionString = builder.Configuration.GetConnectionString(conn) ?? throw new InvalidOperationException("Connection string '"+ conn + "' not found.");
 builder.Services.AddDbContext<NetCore_Assignemt.Data.DbContext>(options =>
     options.UseSqlServer(connectionString));
 
@@ -27,8 +37,17 @@ builder.Services.AddAuthentication().AddGoogle(options =>
     options.ClientSecret = GOOGLE_CLIENT_SECRET;
 }
 );
+
+builder.Services.AddAuthentication().AddFacebook(options =>
+{
+    options.ClientId = FACEBOOK_CLIENT_ID;
+    options.ClientSecret = FACEBOOK_CLIENT_SECRET;
+});
+
+// Identity
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<NetCore_Assignemt.Data.DbContext>();
+
 // Session
 builder.Services.AddDistributedMemoryCache(); 
 builder.Services.AddSession(cfg => {                    
