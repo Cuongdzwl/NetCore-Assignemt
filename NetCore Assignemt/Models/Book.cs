@@ -6,7 +6,7 @@ namespace NetCore_Assignemt.Models
     public class Book
     {
         [Key]
-        public int Id { get; set; }
+        public int BookId { get; set; }
 
         [Required]
         [RegularExpression("/^[a-zA-Z0-9_]+$/")]
@@ -32,6 +32,10 @@ namespace NetCore_Assignemt.Models
 
         [Timestamp]
         public DateTime CreatedDate { get; set;}
+
+        public virtual ICollection<BookAuthor> BookAuthors { get; set; }
+
+        public virtual ICollection<BookCategory> BookCategories { get; set; }
 
     }
 }

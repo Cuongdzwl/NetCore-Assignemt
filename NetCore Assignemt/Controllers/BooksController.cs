@@ -39,7 +39,7 @@ namespace NetCore_Assignemt.Controllers
             }
 
             var book = await _context.Book
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.BookId == id);
             if (book == null)
             {
                 return NotFound();
@@ -94,7 +94,7 @@ namespace NetCore_Assignemt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Publisher,ImagePath,Description,Price,Quantity,CreatedDate")] Book book)
         {
-            if (id != book.Id)
+            if (id != book.BookId)
             {
                 return NotFound();
             }
@@ -108,7 +108,7 @@ namespace NetCore_Assignemt.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookExists(book.Id))
+                    if (!BookExists(book.BookId))
                     {
                         return NotFound();
                     }
@@ -131,7 +131,7 @@ namespace NetCore_Assignemt.Controllers
             }
 
             var book = await _context.Book
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.BookId == id);
             if (book == null)
             {
                 return NotFound();
@@ -161,7 +161,7 @@ namespace NetCore_Assignemt.Controllers
 
         private bool BookExists(int id)
         {
-          return (_context.Book?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Book?.Any(e => e.BookId == id)).GetValueOrDefault();
         }
     }
 }
