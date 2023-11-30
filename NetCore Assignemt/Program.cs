@@ -17,6 +17,9 @@ const string GOOGLE_CLIENT_ID = "1027305466602-6ta3futotkkv4646klci1r1bjj9agama.
 const string FACEBOOK_CLIENT_SECRET = "21bbfc0d23bb25d3ecd68f15f16f4c19";
 const string FACEBOOK_CLIENT_ID = "190652060774363";
 
+// VnPayQr
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 var builder = WebApplication.CreateBuilder(args);
