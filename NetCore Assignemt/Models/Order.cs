@@ -12,5 +12,9 @@ namespace NetCore_Assignemt.Models
 
         [Timestamp]
         public byte[]? CreatedDate { get; set; }
+
+        public long? PaymentTranId { get; set; }
+        public string? BankCode { get; set; }
+        public string? PayStatus { get; set; }
     }
 }
