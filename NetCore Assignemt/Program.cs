@@ -25,7 +25,7 @@ var conn = CLOUD_CONNECTION_STRING;
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString(conn) ?? throw new InvalidOperationException("Connection string '"+ conn + "' not found.");
-builder.Services.AddDbContext<NetCore_Assignemt.Data.DbContext>(options =>
+builder.Services.AddDbContext<NetCore_Assignemt.Data.AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -46,7 +46,7 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 
 // Identity
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<NetCore_Assignemt.Data.DbContext>();
+    .AddEntityFrameworkStores<NetCore_Assignemt.Data.AppDbContext>();
 
 // Session
 builder.Services.AddDistributedMemoryCache(); 
