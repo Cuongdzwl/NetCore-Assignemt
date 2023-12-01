@@ -1,1 +1,1 @@
-# NetCore Assignemt
+# NetCore Assignment
