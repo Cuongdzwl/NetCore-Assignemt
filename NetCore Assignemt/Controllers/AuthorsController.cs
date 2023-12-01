@@ -10,87 +10,87 @@ using NetCore_Assignemt.Models;
 
 namespace NetCore_Assignemt.Controllers
 {
-    public class BooksController : Controller
+    public class AuthorsController : Controller
     {
         private readonly AppDbContext _context;
 
-        public BooksController(AppDbContext context)
+        public AuthorsController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Books
+        // GET: Authors
         public async Task<IActionResult> Index()
         {
-              return _context.Book != null ? 
-                          View(await _context.Book.ToListAsync()) :
-                          Problem("Entity set 'AppDbContext.Book'  is null.");
+              return _context.Author != null ? 
+                          View(await _context.Author.ToListAsync()) :
+                          Problem("Enti ty set 'AppDbContext.Author'  is null.");
         }
 
-        // GET: Books/Details/5
+        // GET: Authors/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Book == null)
+            if (id == null || _context.Author == null)
             {
                 return NotFound();
             }
 
-            var book = await _context.Book
-                .FirstOrDefaultAsync(m => m.BookId == id);
-            if (book == null)
+            var author = await _context.Author
+                .FirstOrDefaultAsync(m => m.AuthorId == id);
+            if (author == null)
             {
                 return NotFound();
             }
 
-            return View(book);
+            return View(author);
         }
 
-        // GET: Books/Create
+        // GET: Authors/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Books/Create
+        // POST: Authors/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BookId,Title,Publisher,ImagePath,Description,Price,Quantity,CreatedDate")] Book book)
+        public async Task<IActionResult> Create([Bind("AuthorId,Name,Description")] Author author)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(book);
+                _context.Add(author);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(book);
+            return View(author);
         }
 
-        // GET: Books/Edit/5
+        // GET: Authors/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Book == null)
+            if (id == null || _context.Author == null)
             {
                 return NotFound();
             }
 
-            var book = await _context.Book.FindAsync(id);
-            if (book == null)
+            var author = await _context.Author.FindAsync(id);
+            if (author == null)
             {
                 return NotFound();
             }
-            return View(book);
+            return View(author);
         }
 
-        // POST: Books/Edit/5
+        // POST: Authors/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BookId,Title,Publisher,ImagePath,Description,Price,Quantity,CreatedDate")] Book book)
+        public async Task<IActionResult> Edit(int id, [Bind("AuthorId,Name,Description")] Author author)
         {
-            if (id != book.BookId)
+            if (id != author.AuthorId)
             {
                 return NotFound();
             }
@@ -99,12 +99,12 @@ namespace NetCore_Assignemt.Controllers
             {
                 try
                 {
-                    _context.Update(book);
+                    _context.Update(author);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookExists(book.BookId))
+                    if (!AuthorExists(author.AuthorId))
                     {
                         return NotFound();
                     }
@@ -115,49 +115,49 @@ namespace NetCore_Assignemt.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(book);
+            return View(author);
         }
 
-        // GET: Books/Delete/5
+        // GET: Authors/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Book == null)
+            if (id == null || _context.Author == null)
             {
                 return NotFound();
             }
 
-            var book = await _context.Book
-                .FirstOrDefaultAsync(m => m.BookId == id);
-            if (book == null)
+            var author = await _context.Author
+                .FirstOrDefaultAsync(m => m.AuthorId == id);
+            if (author == null)
             {
                 return NotFound();
             }
 
-            return View(book);
+            return View(author);
         }
 
-        // POST: Books/Delete/5
+        // POST: Authors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Book == null)
+            if (_context.Author == null)
             {
-                return Problem("Entity set 'AppDbContext.Book'  is null.");
+                return Problem("Entity set 'AppDbContext.Author'  is null.");
             }
-            var book = await _context.Book.FindAsync(id);
-            if (book != null)
+            var author = await _context.Author.FindAsync(id);
+            if (author != null)
             {
-                _context.Book.Remove(book);
+                _context.Author.Remove(author);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BookExists(int id)
+        private bool AuthorExists(int id)
         {
-          return (_context.Book?.Any(e => e.BookId == id)).GetValueOrDefault();
+          return (_context.Author?.Any(e => e.AuthorId == id)).GetValueOrDefault();
         }
     }
 }

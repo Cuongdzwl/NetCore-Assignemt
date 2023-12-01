@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Facebook;
-
-using NetCore_Assignemt.Data;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using NetCore_Assignemt.Data.Migrations;
 
 const string CLOUD_CONNECTION_STRING = "Azure";
-const string LOCAL_CONNECTION_STRING = "DefaultConnection";
+const string LOCAL_CONNECTION_STRING = "WebApp";
 // API Key
 
 // Google
@@ -21,11 +20,11 @@ const string FACEBOOK_CLIENT_ID = "190652060774363";
 /////////////////////////////////////////////////////////////////////////////////////////////////
 var builder = WebApplication.CreateBuilder(args);
 
-var conn = CLOUD_CONNECTION_STRING;
+var conn = LOCAL_CONNECTION_STRING;
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString(conn) ?? throw new InvalidOperationException("Connection string '"+ conn + "' not found.");
-builder.Services.AddDbContext<NetCore_Assignemt.Data.AppDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -46,7 +45,7 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 
 // Identity
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<NetCore_Assignemt.Data.AppDbContext>();
+    .AddEntityFrameworkStores<AppDbContext>();
 
 // Session
 builder.Services.AddDistributedMemoryCache(); 

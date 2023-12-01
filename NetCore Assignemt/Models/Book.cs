@@ -9,7 +9,8 @@ namespace NetCore_Assignemt.Models
         public int BookId { get; set; }
 
         [Required]
-        [RegularExpression("/^[a-zA-Z0-9_]+$/")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 50 characters")]
+        [RegularExpression(@"^[a-zA-Z''-'\s]{1,40}$", ErrorMessage = "Invalid characters in the name")]
         public string Title { get; set; }
 
         [Required]
@@ -31,11 +32,11 @@ namespace NetCore_Assignemt.Models
         public int Quantity { get; set; }
 
         [Timestamp]
-        public DateTime CreatedDate { get; set;}
+        public DateTime? CreatedDate { get; set; }
 
-        public virtual ICollection<BookAuthor> BookAuthors { get; set; }
+        public virtual ICollection<BookAuthor>? BookAuthors { get; set; }
 
-        public virtual ICollection<BookCategory> BookCategories { get; set; }
+        public virtual ICollection<BookCategory>? BookCategories { get; set; }
 
     }
 }

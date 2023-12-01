@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NetCore_Assignemt.Models;
 
-namespace NetCore_Assignemt.Data
+namespace NetCore_Assignemt.Data.Migrations
 {
     public class AppDbContext : IdentityDbContext
     {
@@ -10,6 +10,7 @@ namespace NetCore_Assignemt.Data
             : base(options)
         {
         }
-        public DbSet<NetCore_Assignemt.Models.Book> Book { get; set; } = default!;
+        public DbSet<Book> Book { get; set; } = default!;
+        public DbSet<Author> Author { get; set; } = default!;
     }
 }
