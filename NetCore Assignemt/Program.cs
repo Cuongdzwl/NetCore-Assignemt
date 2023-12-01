@@ -49,6 +49,7 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 
 // Identity
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<NetCore_Assignemt.Data.AppDbContext>();
 
 // Session
