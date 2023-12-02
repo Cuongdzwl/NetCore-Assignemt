@@ -6,11 +6,17 @@ namespace NetCore_Assignemt.Models
     {
         public int Id { get; set; }
 
-        public int UserId { get; set; }
+        [Required]
+        [MaxLength(450)]
+        public string UserId { get; set; }
 
         public double Total { get; set; }
 
         [Timestamp]
         public byte[]? CreatedDate { get; set; }
+
+        public long? PaymentTranId { get; set; }
+        public string? BankCode { get; set; }
+        public string? PayStatus { get; set; }
     }
 }
