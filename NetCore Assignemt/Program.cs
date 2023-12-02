@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.Facebook;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using NetCore_Assignemt.Data;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using NetCore_Assignemt.Services;
 
 const string CLOUD_CONNECTION_STRING = "Azure";
 const string LOCAL_CONNECTION_STRING = "WebApp";
@@ -58,6 +60,9 @@ cfg.Cookie.Name = "Test";
 cfg.IdleTimeout = new TimeSpan(0, 60, 0);
 });
 
+//Email
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.Configure<AuthMessage>(builder.Configuration);
 
 builder.Services.AddControllersWithViews();
 // Api documentation generator

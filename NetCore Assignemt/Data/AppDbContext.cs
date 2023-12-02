@@ -13,5 +13,7 @@ namespace NetCore_Assignemt.Data
         public DbSet<Book> Book { get; set; } = default!;
         public DbSet<Author> Author { get; set; } = default!;
         public DbSet<Category> Category { get; set; } = default!;
+        public DbSet<Cart> Cart { get; set; } = default!;
+        public DbSet<NetCore_Assignemt.Models.Order> Order { get; set; } = default!;
     }
 }

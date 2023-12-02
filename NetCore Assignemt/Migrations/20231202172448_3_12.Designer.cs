@@ -12,8 +12,8 @@ using NetCore_Assignemt.Data;
 namespace NetCore_Assignemt.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231202165027_1")]
-    partial class _1
+    [Migration("20231202172448_3_12")]
+    partial class _3_12
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -332,6 +332,29 @@ namespace NetCore_Assignemt.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("BookCategory");
+                });
+
+            modelBuilder.Entity("NetCore_Assignemt.Models.Cart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cart");
                 });
 
             modelBuilder.Entity("NetCore_Assignemt.Models.Category", b =>
