@@ -6,5 +6,7 @@ namespace NetCore_Assignemt.Services
     public interface IOrderServices
     {
         public Task<IActionResult> PayAsync(Order order);
+
+        public Task<IActionResult> CancelAsync(Order order);
     }
 }
