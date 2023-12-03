@@ -19,6 +19,9 @@ const string GOOGLE_CLIENT_ID = "1027305466602-6ta3futotkkv4646klci1r1bjj9agama.
 const string FACEBOOK_CLIENT_SECRET = "21bbfc0d23bb25d3ecd68f15f16f4c19";
 const string FACEBOOK_CLIENT_ID = "190652060774363";
 
+// VnPayQr
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 var builder = WebApplication.CreateBuilder(args);
@@ -47,9 +50,15 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 });
 
 // Identity
+<<<<<<< HEAD
 builder.Services.AddDefaultIdentity<NetCore_AssignemtUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
+=======
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<NetCore_Assignemt.Data.AppDbContext>();
+>>>>>>> 48a2c599a275b50028eabe728abbf38a2043e4a7
 
 // Session
 builder.Services.AddDistributedMemoryCache(); 
