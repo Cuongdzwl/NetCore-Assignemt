@@ -10,10 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+<<<<<<< HEAD
+    <Compile Remove="Migrations\**" />
+    <Content Remove="Migrations\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="Migrations\**" />
+=======
     <Compile Remove="Servicess\**" />
     <Content Remove="Servicess\**" />
     <EmbeddedResource Remove="Servicess\**" />
     <None Remove="Servicess\**" />
+>>>>>>> 48a2c599a275b50028eabe728abbf38a2043e4a7
   </ItemGroup>
 
   <ItemGroup>

@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NetCore_Assignemt.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using NetCore_Assignemt.Models;
 using NetCore_Assignemt.Data;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using NetCore_Assignemt.Services;
@@ -49,9 +51,15 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 });
 
 // Identity
+<<<<<<< HEAD
+builder.Services.AddDefaultIdentity<NetCore_AssignemtUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+=======
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<NetCore_Assignemt.Data.AppDbContext>();
+>>>>>>> 48a2c599a275b50028eabe728abbf38a2043e4a7
 
 // Session
 builder.Services.AddDistributedMemoryCache(); 
