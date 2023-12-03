@@ -17,12 +17,12 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
-        private readonly UserManager<NetCore_AssignemtUser> _userManager;
-        private readonly SignInManager<NetCore_AssignemtUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
         public IndexModel(
-            UserManager<NetCore_AssignemtUser> userManager,
-            SignInManager<NetCore_AssignemtUser> signInManager)
+            UserManager<User> userManager,
+            SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -72,7 +72,7 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account.Manage
             public string PhoneNumber { get; set; }
         }
 
-        private async Task LoadAsync(NetCore_AssignemtUser user)
+        private async Task LoadAsync(User user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);

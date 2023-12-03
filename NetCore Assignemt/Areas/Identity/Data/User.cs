@@ -2,7 +2,7 @@
 
 namespace NetCore_Assignemt.Areas.Identity.Data
 {
-    public class NetCore_AssignemtUser : IdentityUser
+    public class User : IdentityUser
     {
         [PersonalData]
         public string? Address { get; set; }

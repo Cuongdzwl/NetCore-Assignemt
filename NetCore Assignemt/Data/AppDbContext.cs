@@ -5,7 +5,7 @@ using NetCore_Assignemt.Models;
 
 namespace NetCore_Assignemt.Data
 {
-    public class AppDbContext : IdentityDbContext<NetCore_AssignemtUser>
+    public class AppDbContext : IdentityDbContext<User>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
@@ -19,6 +19,6 @@ namespace NetCore_Assignemt.Data
         public DbSet<Author> Author { get; set; } = default!;
         public DbSet<Category> Category { get; set; } = default!;
         public DbSet<Cart> Cart { get; set; } = default!;
-        public DbSet<NetCore_Assignemt.Models.Order> Order { get; set; } = default!;
+        public DbSet<Order> Order { get; set; } = default!;
     }
 }
