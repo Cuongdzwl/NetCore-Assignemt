@@ -17,17 +17,17 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<NetCore_AssignemtUser> _signInManager;
-        private readonly UserManager<NetCore_AssignemtUser> _userManager;
-        private readonly IUserStore<NetCore_AssignemtUser> _userStore;
-        private readonly IUserEmailStore<NetCore_AssignemtUser> _emailStore;
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly IUserStore<User> _userStore;
+        private readonly IUserEmailStore<User> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
-            UserManager<NetCore_AssignemtUser> userManager,
-            IUserStore<NetCore_AssignemtUser> userStore,
-            SignInManager<NetCore_AssignemtUser> signInManager,
+            UserManager<User> userManager,
+            IUserStore<User> userStore,
+            SignInManager<User> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
@@ -138,27 +138,27 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private NetCore_AssignemtUser CreateUser()
+        private User CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<NetCore_AssignemtUser>();
+                return Activator.CreateInstance<User>();
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(NetCore_AssignemtUser)}'. " +
-                    $"Ensure that '{nameof(NetCore_AssignemtUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(User)}'. " +
+                    $"Ensure that '{nameof(User)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
-        private IUserEmailStore<NetCore_AssignemtUser> GetEmailStore()
+        private IUserEmailStore<User> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<NetCore_AssignemtUser>)_userStore;
+            return (IUserEmailStore<User>)_userStore;
         }
     }
 

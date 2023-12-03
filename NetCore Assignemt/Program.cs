@@ -51,15 +51,9 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 });
 
 // Identity
- //HEAD
-builder.Services.AddDefaultIdentity<NetCore_AssignemtUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
-//=======
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<NetCore_Assignemt.Data.AppDbContext>();
-//>>>>>>> 48a2c599a275b50028eabe728abbf38a2043e4a7
 
 // Session
 builder.Services.AddDistributedMemoryCache(); 
