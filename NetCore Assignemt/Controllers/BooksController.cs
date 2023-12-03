@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Data.Migrations;
 using NetCore_Assignemt.Models;
 
@@ -18,7 +20,7 @@ namespace NetCore_Assignemt.Controllers
         {
             _context = context;
         }
-
+        [Authorize(Roles = "Administrator")]
         // GET: Books
         public async Task<IActionResult> Index()
         {

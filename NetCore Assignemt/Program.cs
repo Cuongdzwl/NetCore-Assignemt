@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NetCore_Assignemt.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using NetCore_Assignemt.Data.Migrations;
+using NetCore_Assignemt.Models;
+using NetCore_Assignemt.Data;
 
 const string CLOUD_CONNECTION_STRING = "Azure";
 const string LOCAL_CONNECTION_STRING = "WebApp";
@@ -44,7 +47,8 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 });
 
 // Identity
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<NetCore_AssignemtUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
 // Session
