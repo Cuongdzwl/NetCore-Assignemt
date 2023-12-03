@@ -18,7 +18,7 @@ namespace NetCore_Assignemt.Controllers
         }
         private List<Book> GetAllProducts()
         {
-            return _db.Book.Include(b => b.BookCategories).ToList();
+            return _db.Book.ToList();
         }
         public IActionResult Index()
         {

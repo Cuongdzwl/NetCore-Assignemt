@@ -53,9 +53,9 @@
     @foreach (var item in ViewBag.Book)
     {
         <div class="product-card">
-            <a asp-action="Detail" asp-route-id="@item.Id"><img src="/images/@item.Picture" class="img-responsive" width="200" height="200" /></a>
+            <a asp-action="Detail" asp-route-id="@item.Id"><img src="/images/@item.Image" class="img-responsive" width="200" height="200" /></a>
             <span class="title"><a asp-action="Detail" asp-route-id="@item.Id">@item.Title</a></span>
-            <span class="title">@item.Author</span>
+            <span class="title">@item.Publisher</span>
             <a asp-controller="Home" asp-action="AddCart" asp-route-id="@item.Id" class="addBook">Add to Cart</a>
         </div>
     }
