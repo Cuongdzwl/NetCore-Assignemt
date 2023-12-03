@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using NetCore_Assignemt.Data.Migrations;
+using NetCore_Assignemt.Data;
 
 #nullable disable
 
@@ -329,6 +329,29 @@ namespace NetCore_Assignemt.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("BookCategory");
+                });
+
+            modelBuilder.Entity("NetCore_Assignemt.Models.Cart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cart");
                 });
 
             modelBuilder.Entity("NetCore_Assignemt.Models.Category", b =>

@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NetCore_Assignemt.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using NetCore_Assignemt.Data.Migrations;
+using NetCore_Assignemt.Models;
+using NetCore_Assignemt.Data;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using NetCore_Assignemt.Services;
 
 const string CLOUD_CONNECTION_STRING = "Azure";
 const string LOCAL_CONNECTION_STRING = "WebApp";
@@ -23,7 +27,7 @@ const string FACEBOOK_CLIENT_ID = "190652060774363";
 /////////////////////////////////////////////////////////////////////////////////////////////////
 var builder = WebApplication.CreateBuilder(args);
 
-var conn = LOCAL_CONNECTION_STRING;
+var conn = CLOUD_CONNECTION_STRING;
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString(conn) ?? throw new InvalidOperationException("Connection string '"+ conn + "' not found.");
@@ -47,9 +51,15 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 });
 
 // Identity
+<<<<<<< HEAD
+builder.Services.AddDefaultIdentity<NetCore_AssignemtUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+=======
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<NetCore_Assignemt.Data.AppDbContext>();
+>>>>>>> 48a2c599a275b50028eabe728abbf38a2043e4a7
 
 // Session
 builder.Services.AddDistributedMemoryCache(); 
@@ -58,6 +68,9 @@ cfg.Cookie.Name = "Test";
 cfg.IdleTimeout = new TimeSpan(0, 60, 0);
 });
 
+//Email
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.Configure<AuthMessage>(builder.Configuration);
 
 builder.Services.AddControllersWithViews();
 // Api documentation generator
