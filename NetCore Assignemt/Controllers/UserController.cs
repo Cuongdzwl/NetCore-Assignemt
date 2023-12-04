@@ -22,4 +22,5 @@ namespace NetCore_Assignemt.Controllers
 
             return Ok(new { UserId = userId });
         }
+    }
 }
