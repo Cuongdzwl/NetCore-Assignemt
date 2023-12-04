@@ -27,7 +27,7 @@ const string FACEBOOK_CLIENT_ID = "190652060774363";
 /////////////////////////////////////////////////////////////////////////////////////////////////
 var builder = WebApplication.CreateBuilder(args);
 
-var conn = CLOUD_CONNECTION_STRING;
+var conn = LOCAL_CONNECTION_STRING;
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString(conn) ?? throw new InvalidOperationException("Connection string '"+ conn + "' not found.");
@@ -64,9 +64,9 @@ cfg.IdleTimeout = new TimeSpan(0, 60, 0);
 
 //Email
 builder.Services.AddTransient<IEmailSender, EmailSender>();
-builder.Services.Configure<AuthMessage>(builder.Configuration);
+//builder.Services.Configure<AuthMessage>(builder.Configuration);
 
-builder.Services.AddControllersWithViews();
+//builder.Services.AddControllersWithViews();
 // Api documentation generator
 builder.Services.AddSwaggerGen();
 
