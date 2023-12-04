@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
 using NetCore_Assignemt.Services;
+using NetCore_Assignemt.Services.DTO;
 
 namespace NetCore_Assignemt.Controllers
 {
@@ -26,31 +28,60 @@ namespace NetCore_Assignemt.Controllers
 
         // GET: api/Carts
         [HttpGet]
-        public async Task<ActionResult<Cart>> GetCart()
+        public async Task<ActionResult<Cart>> Get()
         {
-          if (_context.Cart == null)
-          {
-              return NotFound();
-          }
-            return await _context.Cart.FindAsync();
+            // Get the user's unique identifier from the ClaimsPrincipal
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            // Check if the user has a cart
+            var cartItems = await _context.Cart
+                .Where(c => c.UserId == userId)
+                .Include(c => c.Book)
+                .ToListAsync();
+
+            if (cartItems == null)
+            {
+                // Handle the case when the cart is not found
+                return NoContent();
+            }
+
+            var cartDto = cartItems
+                  .Where(c => c.Book != null) // Filter out items without a corresponding Book
+                  .Select(c => new CartDTO
+                  {
+                      BookId = c.BookId,
+                      Quantity = c.Quantity,
+                      Book = new BookDTO
+                      {
+                          BookId = c.Book.BookId,
+                          Title = c.Book.Title,
+                          Description = c.Book.Description,
+                          Price = c.Book.Price,
+                          ImagePath = c.Book.ImagePath,
+                          Publisher = c.Book.Publisher
+                      }
+                  })
+                  .ToList();
+
+            return Ok(cartDto);
         }
 
-        public IActionResult AddToCart(Book book)
+        public IActionResult AddToCart(int bookid)
         {
             throw new NotImplementedException();
         }
 
-        public IActionResult AddToCart(Book book, int quantity)
+        public IActionResult AddToCart(int book, int quantity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IActionResult> AddToCartAsync(Book book, int quantity)
+        public Task<IActionResult> AddToCartAsync(int bookid, int quantity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IActionResult> AddToCartAsync(Book book)
+        public Task<IActionResult> AddToCartAsync(int bookid)
         {
             throw new NotImplementedException();
         }
