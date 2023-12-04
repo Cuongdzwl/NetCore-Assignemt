@@ -5,8 +5,6 @@ namespace NetCore_Assignemt.Services
 {
     public interface ICartServices
     {
-        public IActionResult AddToCart(int bookid);
-        public IActionResult AddToCart(int book, int quantity);
         public Task<IActionResult> AddToCartAsync(int bookid, int quantity);
         public Task<IActionResult> AddToCartAsync(int bookid);
 
