@@ -8,10 +8,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NetCore_Assignemt.Common;
 using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
 using NetCore_Assignemt.Services;
 using NetCore_Assignemt.Services.DTO;
+using NuGet.Protocol;
 
 namespace NetCore_Assignemt.Controllers
 {
@@ -123,21 +125,105 @@ namespace NetCore_Assignemt.Controllers
             }
         }
 
-        public IActionResult CheckOut()
+        private long GenerateOrderId()
         {
-            throw new NotImplementedException();
-        }
-        // Patch: api/Carts/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PutCart(int id, Cart cart)
-        {
-            throw new NotImplementedException();
+            // Implement your logic to generate a unique order ID
+            // Replace this with your actual implementation
+            return DateTime.Now.Ticks;
         }
 
+        public async Task<IActionResult> CheckOut()
+        {
+            try
+            {
+                var userId = getUserId();
+                if(userId == null)
+                {
+                    return Unauthorized();
+                }
+                // Generate Order id
+                var orderId = GenerateOrderId();
+
+                // Get the user's cart
+                var userCart = await _context.Cart.Include(c => c.Book).Where(c => c.UserId == userId).ToListAsync();
+
+                if (userCart == null || !userCart.Any())
+                {
+                    return BadRequest("Cart is empty. Add more items to the cart before checking out.");
+                }
+                // Calculate the total price
+                var total = userCart.Sum(c => c.Quantity * c.Book.Price);
+
+                // Create an order
+                var order = new Order
+                {
+                    Status = (int)OrderStatus.Pending,
+                    Id = orderId,
+                    UserId = userId,
+                    Total = total,
+                };
+
+                // Create order details
+                foreach (var cartItem in userCart)
+                {
+                    var orderDetail = new OrderDetail
+                    {
+                        BookId = cartItem.BookId,
+                        OrderId = orderId,
+                        Price = cartItem.Book.Price,
+                        Quantity = cartItem.Quantity
+                    };
+
+                    // Add order detail to the context
+                    _context.OrderDetail.Add(orderDetail);
+
+                    // Remove cart item
+                    _context.Cart.Remove(cartItem);
+                }
+
+                // Add order to the context
+                _context.Order.Add(order);
+
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+
+                return Ok(new { OrderInfo = order, OrderItems = userCart });
+            }catch(Exception e)
+            {
+                return BadRequest();
+            }
+            }
+        // Patch: api/Carts/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPatch("edit/{bookid}/{quantity}")]
+        public async Task<IActionResult> Edit(int bookid, int? quantity)
+        {
+            try
+            {
+
+            var userId = getUserId();
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var item = await _context.Cart.Where(c => c.BookId == bookid).Where(c => c.UserId == userId).FirstOrDefaultAsync();
+
+            if (item == null)
+            {
+                return NotFound(new { Message = "Book Not Found!" });
+            }
+            
+            _context.Cart.Update(item);
+            return Ok("Cart Updated successfully");
+            }catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
         // 204 : No Content
         // DELETE: api/Carts/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{bookid}")]
         public async Task<IActionResult> DeleteCart(int bookid)
         {
             var userId = getUserId();
@@ -160,7 +246,7 @@ namespace NetCore_Assignemt.Controllers
         }
 
         // 204 : No Content
-        [HttpDelete("all")]
+        [HttpDelete("delete/all")]
         public async Task<IActionResult> DeleteCart()
         {
             var userId = getUserId();

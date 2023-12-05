@@ -35,6 +35,7 @@
   <ItemGroup>
     <Folder Include="Tests\" />
     <Folder Include="Views\Email\" />
+    <Folder Include="Views\Orders\" />
   </ItemGroup>
 
 </Project>

@@ -8,6 +8,6 @@ namespace NetCore_Assignemt.Services
         public Task<IActionResult> AddToCartAsync(int bookid, int quantity);
         public Task<IActionResult> AddToCartAsync(int bookid);
 
-        public IActionResult CheckOut();
+        public Task<IActionResult> CheckOut();
     }
 }
