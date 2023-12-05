@@ -63,8 +63,8 @@ cfg.IdleTimeout = new TimeSpan(0, 60, 0);
 });
 
 //Email
-builder.Services.AddTransient<IEmailSender, EmailSender>();
-builder.Services.Configure<AuthMessage>(builder.Configuration);
+//builder.Services.AddTransient<IEmailSender, EmailSender>();
+//builder.Services.Configure<AuthMessage>(builder.Configuration);
 
 builder.Services.AddControllersWithViews();
 // Api documentation generator
