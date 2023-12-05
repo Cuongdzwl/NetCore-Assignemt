@@ -8,6 +8,8 @@ using NetCore_Assignemt.Models;
 using NetCore_Assignemt.Data;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using NetCore_Assignemt.Services;
+using sib_api_v3_sdk;
+using sib_api_v3_sdk.Client;
 
 const string CLOUD_CONNECTION_STRING = "Azure";
 const string LOCAL_CONNECTION_STRING = "WebApp";
@@ -37,6 +39,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Authentication
+builder.Services.AddAuthentication().AddCookie();
 builder.Services.AddAuthentication().AddGoogle(options =>
 {
     options.ClientId = GOOGLE_CLIENT_ID;
@@ -51,7 +54,7 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 });
 
 // Identity
-builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
@@ -63,8 +66,9 @@ cfg.IdleTimeout = new TimeSpan(0, 60, 0);
 });
 
 //Email
-//builder.Services.AddTransient<IEmailSender, EmailSender>();
-//builder.Services.Configure<AuthMessage>(builder.Configuration);
+// builder.Services.AddTransient<IEmailSender, EmailSender>();
+// builder.Services.Configure<AuthMessage>(builder.Configuration);
+sib_api_v3_sdk.Client.Configuration.Default.AddApiKey("api-key", builder.Configuration["BrevoSMTP:api_key"]);
 
 builder.Services.AddControllersWithViews();
 // Api documentation generator

@@ -16,9 +16,14 @@ namespace NetCore_Assignemt.Data
             base.OnModelCreating(builder);
         }
         public DbSet<Book> Book { get; set; } = default!;
-        public DbSet<Author> Author { get; set; } = default!;
+        public DbSet<Author> Author { get; set; } = default!; 
+        public DbSet<BookAuthor> BookAuthor { get; set; } = default!;
+        public DbSet<BookCategory> BookCategory { get; set; } = default!;
         public DbSet<Category> Category { get; set; } = default!;
         public DbSet<Cart> Cart { get; set; } = default!;
         public DbSet<Order> Order { get; set; } = default!;
+        public DbSet<OrderDetail> OrderDetail { get; set; } = default!;
+
+        
     }
 }

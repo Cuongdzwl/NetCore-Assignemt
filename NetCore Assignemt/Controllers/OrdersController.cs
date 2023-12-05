@@ -122,22 +122,23 @@ namespace NetCore_Assignemt.Controllers
             return (_context.Order?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        public IActionResult ShowAllOrder()
+
+        public Task<IActionResult> Get()
         {
             throw new NotImplementedException();
         }
 
-        public IActionResult Get(Order order)
+        public Task<IActionResult> Get(int orderid)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IActionResult> PayAsync(Order order)
+        public Task<IActionResult> PayAsync(int orderid)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IActionResult> CancelAsync(Order order)
+        public Task<IActionResult> CancelAsync(int orderid)
         {
             throw new NotImplementedException();
         }
