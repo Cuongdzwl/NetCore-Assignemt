@@ -33,18 +33,23 @@ namespace NetCore_Assignemt.Controllers
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
-        // GET: api/Carts
+        // GET: api/Carts/?size=5&getall=false
         [HttpGet]
-        public async Task<ActionResult<Cart>> Get()
+        public async Task<ActionResult<Cart>> Get([FromQuery] int? size)
         {
             // Get the user's unique identifier from the ClaimsPrincipal
             var userId = getUserId();
 
             // Check if the user has a cart
-            var cartItems = await _context.Cart
+            var query = _context.Cart
                 .Where(c => c.UserId == userId)
-                .Include(c => c.Book)
-                .ToListAsync();
+                .Include(c => c.Book);
+
+            if (size.HasValue == true || size != null)
+            {
+                query = (Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Cart, Book?>)query.Take(size.Value);
+            }
+            var cartItems = await query.ToListAsync();
 
             if (cartItems == null)
             {
@@ -94,10 +99,10 @@ namespace NetCore_Assignemt.Controllers
                 // User not authenticated
                 if (userId == null)
                 {
-                    return Unauthorized(); 
+                    return Unauthorized();
                 }
                 // Book Not Exist
-                if(await _context.Book.Where(c => c.BookId == bookId).FirstOrDefaultAsync() == null)
+                if (await _context.Book.Where(c => c.BookId == bookId).FirstOrDefaultAsync() == null)
                 {
                     return NotFound(new { Message = "Book Does Not Exist!" });
                 }
@@ -106,7 +111,7 @@ namespace NetCore_Assignemt.Controllers
                 // New Item
                 if (userCart == null)
                 {
-                    userCart = new Cart { UserId = userId , BookId = bookId, Quantity = quantity };
+                    userCart = new Cart { UserId = userId, BookId = bookId, Quantity = quantity };
                     _context.Cart.Add(userCart);
                 }
                 // Modify
@@ -117,7 +122,7 @@ namespace NetCore_Assignemt.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("Book added to cart successfully", new CartDTO {BookId = bookId, Quantity = quantity});
+                return CreatedAtAction("Book added to cart successfully", new CartDTO { BookId = bookId, Quantity = quantity });
             }
             catch (Exception ex)
             {
@@ -132,12 +137,14 @@ namespace NetCore_Assignemt.Controllers
             return DateTime.Now.Ticks;
         }
 
+        [HttpPost("checkout")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckOut()
         {
             try
             {
                 var userId = getUserId();
-                if(userId == null)
+                if (userId == null)
                 {
                     return Unauthorized();
                 }
@@ -188,12 +195,13 @@ namespace NetCore_Assignemt.Controllers
                 await _context.SaveChangesAsync();
 
                 return Ok(new { OrderInfo = order, OrderItems = userCart });
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return BadRequest();
             }
-            }
-        // Patch: api/Carts/5
+        }
+        // Patch: api/Carts/edit/
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPatch("edit/{bookid}/{quantity}")]
         public async Task<IActionResult> Edit(int bookid, int? quantity)
@@ -201,34 +209,35 @@ namespace NetCore_Assignemt.Controllers
             try
             {
 
-            var userId = getUserId();
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
+                var userId = getUserId();
+                if (userId == null)
+                {
+                    return Unauthorized();
+                }
 
-            var item = await _context.Cart.Where(c => c.BookId == bookid).Where(c => c.UserId == userId).FirstOrDefaultAsync();
+                var item = await _context.Cart.Where(c => c.BookId == bookid).Where(c => c.UserId == userId).FirstOrDefaultAsync();
 
-            if (item == null)
-            {
-                return NotFound(new { Message = "Book Not Found!" });
+                if (item == null)
+                {
+                    return NotFound(new { Message = "Book Not Found!" });
+                }
+
+                _context.Cart.Update(item);
+                return Ok("Cart Updated successfully");
             }
-            
-            _context.Cart.Update(item);
-            return Ok("Cart Updated successfully");
-            }catch (Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest();
             }
         }
         // 204 : No Content
-        // DELETE: api/Carts/5
+        // DELETE: api/Carts/delete
         [HttpDelete("delete/{bookid}")]
         public async Task<IActionResult> DeleteCart(int bookid)
         {
             var userId = getUserId();
 
-            if(userId == null)
+            if (userId == null)
             {
                 return Unauthorized();
             }
@@ -246,7 +255,7 @@ namespace NetCore_Assignemt.Controllers
         }
 
         // 204 : No Content
-        [HttpDelete("delete/all")]
+        [HttpDelete("deleteall")]
         public async Task<IActionResult> DeleteCart()
         {
             var userId = getUserId();
@@ -257,7 +266,7 @@ namespace NetCore_Assignemt.Controllers
             }
 
             var item = await _context.Cart.Where(c => c.UserId == userId).FirstOrDefaultAsync();
-            if(item == null)
+            if (item == null)
             {
                 return NotFound(new { Message = "Empty Cart!" });
             }

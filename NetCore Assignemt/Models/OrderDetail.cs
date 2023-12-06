@@ -4,6 +4,7 @@ namespace NetCore_Assignemt.Models
 {
     public class OrderDetail
     {
+        public long Id { get; set; }
         public int BookId { get; set; }
         public long OrderId { get; set; }
         [Required]
