@@ -362,9 +362,13 @@ namespace NetCore_Assignemt.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Cart");
                 });
@@ -394,11 +398,11 @@ namespace NetCore_Assignemt.Migrations
 
             modelBuilder.Entity("NetCore_Assignemt.Models.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("BankCode")
                         .HasColumnType("nvarchar(max)");
@@ -414,6 +418,9 @@ namespace NetCore_Assignemt.Migrations
                     b.Property<long?>("PaymentTranId")
                         .HasColumnType("bigint");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<double>("Total")
                         .HasColumnType("float");
 
@@ -424,7 +431,39 @@ namespace NetCore_Assignemt.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Order");
+                });
+
+            modelBuilder.Entity("NetCore_Assignemt.Models.OrderDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("OrderDetail");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -516,6 +555,60 @@ namespace NetCore_Assignemt.Migrations
                     b.Navigation("Categories");
                 });
 
+            modelBuilder.Entity("NetCore_Assignemt.Models.Cart", b =>
+                {
+                    b.HasOne("NetCore_Assignemt.Models.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NetCore_Assignemt.Areas.Identity.Data.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NetCore_Assignemt.Models.Order", b =>
+                {
+                    b.HasOne("NetCore_Assignemt.Areas.Identity.Data.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NetCore_Assignemt.Models.OrderDetail", b =>
+                {
+                    b.HasOne("NetCore_Assignemt.Models.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NetCore_Assignemt.Models.Order", "Order")
+                        .WithOne("OrderDetail")
+                        .HasForeignKey("NetCore_Assignemt.Models.OrderDetail", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("NetCore_Assignemt.Areas.Identity.Data.User", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("NetCore_Assignemt.Models.Author", b =>
                 {
                     b.Navigation("BookAuthors");
@@ -526,6 +619,11 @@ namespace NetCore_Assignemt.Migrations
                     b.Navigation("BookAuthors");
 
                     b.Navigation("BookCategories");
+                });
+
+            modelBuilder.Entity("NetCore_Assignemt.Models.Order", b =>
+                {
+                    b.Navigation("OrderDetail");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using NetCore_Assignemt.Models;
 
 namespace NetCore_Assignemt.Areas.Identity.Data
 {
@@ -15,5 +16,6 @@ namespace NetCore_Assignemt.Areas.Identity.Data
         [PersonalData]
         public string? Gender { get; set; }
 
+        public virtual ICollection<Order>? Orders { get; set; }
     }
 }
