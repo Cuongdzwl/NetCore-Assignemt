@@ -65,6 +65,7 @@ cfg.Cookie.Name = "Test";
 cfg.IdleTimeout = new TimeSpan(0, 60, 0);
 });
 
+
 //Email
 // builder.Services.AddTransient<IEmailSender, EmailSender>();
 // builder.Services.Configure<AuthMessage>(builder.Configuration);

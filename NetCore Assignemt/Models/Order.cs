@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NetCore_Assignemt.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace NetCore_Assignemt.Models
 {
@@ -19,5 +20,8 @@ namespace NetCore_Assignemt.Models
         public long? PaymentTranId { get; set; }
         public string? BankCode { get; set; }
         public string? PayStatus { get; set; }
+
+        public virtual OrderDetail? OrderDetail { get; set; }
+        public virtual User? User { get; set; }
     }
 }
