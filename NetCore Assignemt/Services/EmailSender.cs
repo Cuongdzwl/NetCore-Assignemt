@@ -2,7 +2,7 @@
 
 namespace NetCore_Assignemt.Services
 {
-    public class EmailSender : IEmailSender
+    public class EmailSender
     {
         public Task SendEmailAsync(string email, string subject, string htmlMessage)
         {

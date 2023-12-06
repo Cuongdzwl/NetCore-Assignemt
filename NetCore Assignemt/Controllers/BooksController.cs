@@ -15,11 +15,12 @@ namespace NetCore_Assignemt.Controllers
     {
         private readonly AppDbContext _context;
 
+
         public BooksController(AppDbContext context)
         {
             _context = context;
         }
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "ADMIN")]
         // GET: Books
         public async Task<IActionResult> Index()
         {
