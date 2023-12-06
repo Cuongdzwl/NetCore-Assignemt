@@ -1,0 +1,13 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model UserRoles
+
+<h2>Set Roles for @Model.UserId</h2>
+
+<form asp-action="SetRoles" method="post">
+    <input type="hidden" asp-for="UserId" />
+
+    <label for="SelectedRoles">Select Roles:</label>
+    <select asp-for="SelectedRoles" asp-items="new SelectList(Model.AvailableRoles, nameof(IdentityRole.Name), nameof(IdentityRole.Name))" multiple></select>
+
+    <button type="submit">Save Roles</button>
+</form>
