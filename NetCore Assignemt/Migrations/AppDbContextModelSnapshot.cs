@@ -399,10 +399,7 @@ namespace NetCore_Assignemt.Migrations
             modelBuilder.Entity("NetCore_Assignemt.Models.Order", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("BankCode")
                         .HasColumnType("nvarchar(max)");

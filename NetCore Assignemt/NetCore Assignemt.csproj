@@ -33,9 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\Seed\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Tests\" />
     <Folder Include="Views\Email\" />
-    <Folder Include="Views\Orders\" />
   </ItemGroup>
 
 </Project>

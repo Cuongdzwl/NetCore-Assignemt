@@ -138,11 +138,11 @@ namespace NetCore_Assignemt.Controllers
         }
 
         [HttpPost("checkout")]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckOut()
         {
-            try
-            {
+            //try
+            //{
                 var userId = getUserId();
                 if (userId == null)
                 {
@@ -152,26 +152,25 @@ namespace NetCore_Assignemt.Controllers
                 var orderId = GenerateOrderId();
 
                 // Get the user's cart
-                var userCart = await _context.Cart.Include(c => c.Book).Where(c => c.UserId == userId).ToListAsync();
-
+                var userCart = await _context.Cart.Include(c => c.Book).Where(c => c.Book.BookId == c.BookId).Where(c => c.UserId == userId).ToListAsync();
                 if (userCart == null || !userCart.Any())
                 {
                     return BadRequest("Cart is empty. Add more items to the cart before checking out.");
                 }
                 // Calculate the total price
                 var total = userCart.Sum(c => c.Quantity * c.Book.Price);
-
                 // Create an order
                 var order = new Order
                 {
-                    Status = (int)OrderStatus.Pending,
                     Id = orderId,
                     UserId = userId,
                     Total = total,
+                    Status = (int)OrderStatus.Pending,
                 };
+                _context.Order.Add(order);
 
-                // Create order details
-                foreach (var cartItem in userCart)
+            // Create order details
+            foreach (var cartItem in userCart)
                 {
                     var orderDetail = new OrderDetail
                     {
@@ -188,18 +187,15 @@ namespace NetCore_Assignemt.Controllers
                     _context.Cart.Remove(cartItem);
                 }
 
-                // Add order to the context
-                _context.Order.Add(order);
-
                 // Save changes to the database
                 await _context.SaveChangesAsync();
 
                 return Ok(new { OrderInfo = order, OrderItems = userCart });
-            }
-            catch (Exception e)
-            {
-                return BadRequest();
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    return BadRequest();
+            //}
         }
         // Patch: api/Carts/edit/
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
