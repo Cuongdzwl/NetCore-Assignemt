@@ -457,8 +457,7 @@ namespace NetCore_Assignemt.Migrations
 
                     b.HasIndex("BookId");
 
-                    b.HasIndex("OrderId")
-                        .IsUnique();
+                    b.HasIndex("OrderId");
 
                     b.ToTable("OrderDetail");
                 });
@@ -591,8 +590,8 @@ namespace NetCore_Assignemt.Migrations
                         .IsRequired();
 
                     b.HasOne("NetCore_Assignemt.Models.Order", "Order")
-                        .WithOne("OrderDetail")
-                        .HasForeignKey("NetCore_Assignemt.Models.OrderDetail", "OrderId")
+                        .WithMany("OrderDetail")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
