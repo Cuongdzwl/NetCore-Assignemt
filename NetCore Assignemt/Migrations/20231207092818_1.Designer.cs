@@ -12,7 +12,7 @@ using NetCore_Assignemt.Data;
 namespace NetCore_Assignemt.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231206193744_1")]
+    [Migration("20231207092818_1")]
     partial class _1
     {
         /// <inheritdoc />
@@ -402,10 +402,7 @@ namespace NetCore_Assignemt.Migrations
             modelBuilder.Entity("NetCore_Assignemt.Models.Order", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("BankCode")
                         .HasColumnType("nvarchar(max)");

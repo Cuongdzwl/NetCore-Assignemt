@@ -2,18 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
-using NetCore_Assignemt.Services;
 
 namespace NetCore_Assignemt.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class OrdersController : ControllerBase,IOrderServices
+    public class OrdersController : Controller
     {
         private readonly AppDbContext _context;
 
@@ -22,125 +19,156 @@ namespace NetCore_Assignemt.Controllers
             _context = context;
         }
 
-        // GET: api/Orders
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrder()
+        // GET: Orders
+        public async Task<IActionResult> Index()
         {
-          if (_context.Order == null)
-          {
-              return NotFound();
-          }
-            return await _context.Order.ToListAsync();
+            var appDbContext = _context.Order.Include(o => o.User);
+            return View(await appDbContext.ToListAsync());
         }
 
-        // GET: api/Orders/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Order>> GetOrder(int id)
+        public async Task<IActionResult> MyOrders()
         {
-          if (_context.Order == null)
-          {
-              return NotFound();
-          }
-            var order = await _context.Order.FindAsync(id);
+            var appDbContext = _context.Order.Include(o => o.User);
+            return View(await appDbContext.ToListAsync());
+        }
 
+        // GET: Orders/Details/5
+        public async Task<IActionResult> Details(long? id)
+        {
+            if (id == null || _context.Order == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Order
+                .Include(o => o.User)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
                 return NotFound();
             }
 
-            return order;
+            return View(order);
         }
 
-        // PUT: api/Orders/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrder(int id, Order order)
+        // GET: Orders/Create
+        public IActionResult Create()
+        {
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            return View();
+        }
+
+        // POST: Orders/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] Order order)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(order);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
+            return View(order);
+        }
+
+        // GET: Orders/Edit/5
+        public async Task<IActionResult> Edit(long? id)
+        {
+            if (id == null || _context.Order == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Order.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
+            return View(order);
+        }
+
+        // POST: Orders/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(long id, [Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] Order order)
         {
             if (id != order.Id)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(order).State = EntityState.Modified;
-
-            try
+            if (ModelState.IsValid)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!OrderExists(id))
+                try
                 {
-                    return NotFound();
+                    _context.Update(order);
+                    await _context.SaveChangesAsync();
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    if (!OrderExists(order.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
+                return RedirectToAction(nameof(Index));
             }
-
-            return NoContent();
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
+            return View(order);
         }
 
-        // POST: api/Orders
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Order>> PostOrder(Order order)
+        // GET: Orders/Delete/5
+        public async Task<IActionResult> Delete(long? id)
         {
-          if (_context.Order == null)
-          {
-              return Problem("Entity set 'AppDbContext.Order'  is null.");
-          }
-            _context.Order.Add(order);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetOrder", new { id = order.Id }, order);
-        }
-
-        // DELETE: api/Orders/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOrder(int id)
-        {
-            if (_context.Order == null)
+            if (id == null || _context.Order == null)
             {
                 return NotFound();
             }
-            var order = await _context.Order.FindAsync(id);
+
+            var order = await _context.Order
+                .Include(o => o.User)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
                 return NotFound();
             }
 
-            _context.Order.Remove(order);
+            return View(order);
+        }
+
+        // POST: Orders/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(long id)
+        {
+            if (_context.Order == null)
+            {
+                return Problem("Entity set 'AppDbContext.Order'  is null.");
+            }
+            var order = await _context.Order.FindAsync(id);
+            if (order != null)
+            {
+                _context.Order.Remove(order);
+            }
+            
             await _context.SaveChangesAsync();
-
-            return NoContent();
+            return RedirectToAction(nameof(Index));
         }
 
-        private bool OrderExists(int id)
+        private bool OrderExists(long id)
         {
-            return (_context.Order?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
-
-        public Task<IActionResult> Get()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IActionResult> Get(int orderid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IActionResult> PayAsync(int orderid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IActionResult> CancelAsync(int orderid)
-        {
-            throw new NotImplementedException();
+          return (_context.Order?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

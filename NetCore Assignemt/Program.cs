@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using NetCore_Assignemt.Services;
 using sib_api_v3_sdk;
 using sib_api_v3_sdk.Client;
+using System.Text.Json.Serialization;
 
 const string CLOUD_CONNECTION_STRING = "Azure";
 const string LOCAL_CONNECTION_STRING = "WebApp";
@@ -71,7 +72,11 @@ cfg.IdleTimeout = new TimeSpan(0, 60, 0);
 // builder.Services.Configure<AuthMessage>(builder.Configuration);
 sib_api_v3_sdk.Client.Configuration.Default.AddApiKey("api-key", builder.Configuration["BrevoSMTP:api_key"]);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+}); 
+
 // Api documentation generator
 builder.Services.AddSwaggerGen();
 
