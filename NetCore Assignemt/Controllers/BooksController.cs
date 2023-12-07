@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using NetCore_Assignemt.Data;
+using NetCore_Assignemt.Data.Migrations;
 using NetCore_Assignemt.Models;
 
 namespace NetCore_Assignemt.Controllers

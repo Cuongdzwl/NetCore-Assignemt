@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NetCore_Assignemt.Areas.Identity.Data;
-using NetCore_Assignemt.Data;
+using NetCore_Assignemt.Data.Migrations;
 using NetCore_Assignemt.Models;
 
 namespace NetCore_Assignemt.Controllers
