@@ -12,7 +12,7 @@ using NetCore_Assignemt.Data;
 namespace NetCore_Assignemt.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231207092818_1")]
+    [Migration("20231207165828_1")]
     partial class _1
     {
         /// <inheritdoc />
@@ -460,8 +460,7 @@ namespace NetCore_Assignemt.Migrations
 
                     b.HasIndex("BookId");
 
-                    b.HasIndex("OrderId")
-                        .IsUnique();
+                    b.HasIndex("OrderId");
 
                     b.ToTable("OrderDetail");
                 });
@@ -594,8 +593,8 @@ namespace NetCore_Assignemt.Migrations
                         .IsRequired();
 
                     b.HasOne("NetCore_Assignemt.Models.Order", "Order")
-                        .WithOne("OrderDetail")
-                        .HasForeignKey("NetCore_Assignemt.Models.OrderDetail", "OrderId")
+                        .WithMany("OrderDetail")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

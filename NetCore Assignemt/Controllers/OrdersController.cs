@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
+using NetCore_Assignemt.Services;
 
 namespace NetCore_Assignemt.Controllers
 {
-    public class OrdersController : Controller
+    public class OrdersController : Controller,IOrderServices
     {
         private readonly AppDbContext _context;
 
@@ -169,6 +170,21 @@ namespace NetCore_Assignemt.Controllers
         private bool OrderExists(long id)
         {
           return (_context.Order?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        public Task<IActionResult> PayAsync(int orderid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IActionResult> CancelAsync(int orderid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IActionResult> NextStage(int orderid)
+        {
+            throw new NotImplementedException();
         }
     }
 }

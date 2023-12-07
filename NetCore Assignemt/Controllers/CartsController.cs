@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
+using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -148,14 +149,22 @@ namespace NetCore_Assignemt.Controllers
                 {
                     return Unauthorized();
                 }
-                // Generate Order id
-                var orderId = GenerateOrderId();
+
+            var userInfo = _context.Users.Where(c => c.Id == userId).FirstOrDefault();
+
+            if (userInfo.Address  == null || userInfo.Address.Length == 0) { return NotFound(new { message = "You need to provide your detailed Address before checking out!"}); }
+            if (userInfo.City == null || userInfo.City.Length == 0) { return NotFound(new { message = "You need to provide your City before checking out!" }); }
+            if (userInfo.District == null || userInfo.District.Length == 0) { return NotFound(new { message = "You need to provide your District before checking out!" }); }
+            if (userInfo.PhoneNumber == null || userInfo.PhoneNumber.Length < 8 || userInfo.PhoneNumber.Length > 12) { return NotFound(new { message = "You need to provide your PhoneNumber before checking out!" }); }
+
+            // Generate Order i
+            var orderId = GenerateOrderId();
 
                 // Get the user's cart
                 var userCart = await _context.Cart.Include(c => c.Book).Where(c => c.Book.BookId == c.BookId).Where(c => c.UserId == userId).ToListAsync();
                 if (userCart == null || !userCart.Any())
                 {
-                    return BadRequest("Cart is empty. Add more items to the cart before checking out.");
+                    return BadRequest(new { message = "Cart is empty. Add more items to the cart before checking out." });
                 }
                 // Calculate the total price
                 var total = userCart.Sum(c => c.Quantity * c.Book.Price);
@@ -190,7 +199,7 @@ namespace NetCore_Assignemt.Controllers
                 // Save changes to the database
                 await _context.SaveChangesAsync();
 
-                return Ok(new { OrderInfo = order, OrderItems = userCart });
+                return Ok(new { message = "Check Out Successfully!"});
             //}
             //catch (Exception e)
             //{

@@ -421,8 +421,7 @@ namespace NetCore_Assignemt.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_OrderDetail_OrderId",
                 table: "OrderDetail",
-                column: "OrderId",
-                unique: true);
+                column: "OrderId");
         }
 
         /// <inheritdoc />
