@@ -1,10 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NetCore_Assignemt.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NetCore_Assignemt.Models
 {
     public class Order
     {
-        public int Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public long Id { get; set; }
 
         [Required]
         [MaxLength(450)]
@@ -12,11 +16,15 @@ namespace NetCore_Assignemt.Models
 
         public double Total { get; set; }
 
+        public int Status { get; set; }
         [Timestamp]
         public byte[]? CreatedDate { get; set; }
-
+            
         public long? PaymentTranId { get; set; }
         public string? BankCode { get; set; }
         public string? PayStatus { get; set; }
+
+        public virtual ICollection<OrderDetail>? OrderDetail { get; set; }
+        public virtual User? User { get; set; }
     }
 }

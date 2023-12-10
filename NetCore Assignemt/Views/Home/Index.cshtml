@@ -7,4 +7,17 @@
 <!-- Example link to navigate to the role creation page -->
 <a asp-controller="Roles" asp-action="Create">Create Role</a>
 <a asp-controller="Admin" asp-action="SetRoles" asp-route-userId="@UserManager.GetUserId(User)">Set Roles</a>
+  
+<div class="List-book">
+    <button class="btn btn-success" id="checkoutButton" onclick="checkOut()">Check Out</button>
+    @foreach (var item in ViewBag.Book)
+    {
+        <div class="product-card">
+            <a asp-action="Detail" asp-route-id="@item.BookId"><img src="/images/@item.Image" class="img-responsive" width="200" height="200" /></a>
+            <span class="title"><a asp-action="Detail" asp-route-id="@item.BookId">@item.Title</a></span>
+            <span class="title">@item.Publisher</span>
+            <button onclick="addToCart(@item.BookId,1)">Add to Cart</button>
+        </div>
+    }
+</div>
 

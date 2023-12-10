@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Claims;
+using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NetCore_Assignemt.Data.Migrations;
+using NetCore_Assignemt.Common;
+using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
 using NetCore_Assignemt.Services;
+using NetCore_Assignemt.Services.DTO;
+using NuGet.Protocol;
 
 namespace NetCore_Assignemt.Controllers
 {
@@ -24,105 +30,255 @@ namespace NetCore_Assignemt.Controllers
             _context = context;
         }
 
-        // GET: api/Carts
+        private string? getUserId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+        // GET: api/Carts/?size=5&getall=false
         [HttpGet]
-        public async Task<ActionResult<Cart>> GetCart()
+        public async Task<ActionResult<Cart>> Get([FromQuery] int? size)
         {
-          if (_context.Cart == null)
-          {
-              return NotFound();
-          }
-            return await _context.Cart.FindAsync();
+            // Get the user's unique identifier from the ClaimsPrincipal
+            var userId = getUserId();
+
+            // Check if the user has a cart
+            var query = _context.Cart
+                .Where(c => c.UserId == userId)
+                .Include(c => c.Book);
+
+            if (size.HasValue == true || size != null)
+            {
+                query = (Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Cart, Book?>)query.Take(size.Value);
+            }
+            var cartItems = await query.ToListAsync();
+
+            if (cartItems == null)
+            {
+                // Handle the case when the cart is not found
+                return NoContent();
+            }
+
+            var cartDto = cartItems
+                  .Where(c => c.Book != null) // Filter out items without a corresponding Book
+                  .Select(c => new CartDTO
+                  {
+                      BookId = c.BookId,
+                      Quantity = c.Quantity,
+                      Book = new BookDTO
+                      {
+                          BookId = c.Book.BookId,
+                          Title = c.Book.Title,
+                          Description = c.Book.Description,
+                          Price = c.Book.Price,
+                          ImagePath = c.Book.ImagePath,
+                          Publisher = c.Book.Publisher
+                      }
+                  })
+                  .ToList();
+
+            return Ok(cartDto);
         }
 
-        public IActionResult AddToCart(Book book)
+
+        [HttpPost("AddToCart/{bookId}")]
+        public async Task<IActionResult> AddToCartAsync(int bookId)
         {
-            throw new NotImplementedException();
+            return await AddToCartAsyncInternal(bookId, 1);
         }
 
-        public IActionResult AddToCart(Book book, int quantity)
+        [HttpPost("AddtoCart/{bookId}/{quantity}")]
+        public async Task<IActionResult> AddToCartAsync(int bookId, int quantity)
         {
-            throw new NotImplementedException();
+            return await AddToCartAsyncInternal(bookId, quantity);
         }
 
-        public Task<IActionResult> AddToCartAsync(Book book, int quantity)
+        private async Task<IActionResult> AddToCartAsyncInternal(int bookId, int quantity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var userId = getUserId();
+                // User not authenticated
+                if (userId == null)
+                {
+                    return Unauthorized();
+                }
+                // Book Not Exist
+                if (await _context.Book.Where(c => c.BookId == bookId).FirstOrDefaultAsync() == null)
+                {
+                    return NotFound(new { Message = "Book Does Not Exist!" });
+                }
+                // Check Item in cart
+                var userCart = await _context.Cart.Where(c => c.UserId == userId).Where(c => c.BookId == bookId).FirstOrDefaultAsync();
+                // New Item
+                if (userCart == null)
+                {
+                    userCart = new Cart { UserId = userId, BookId = bookId, Quantity = quantity };
+                    _context.Cart.Add(userCart);
+                }
+                // Modify
+                if (userCart != null)
+                {
+                    userCart.Quantity += quantity;
+                }
+
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("Book added to cart successfully", new CartDTO { BookId = bookId, Quantity = quantity });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
+            }
         }
 
-        public Task<IActionResult> AddToCartAsync(Book book)
+        private long GenerateOrderId()
         {
-            throw new NotImplementedException();
+            // Implement your logic to generate a unique order ID
+            // Replace this with your actual implementation
+            return DateTime.Now.Ticks;
         }
 
-        public IActionResult CheckOut()
+        [HttpPost("checkout")]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> CheckOut()
         {
-            throw new NotImplementedException();
+            //try
+            //{
+                var userId = getUserId();
+                if (userId == null)
+                {
+                    return Unauthorized();
+                }
+
+            var userInfo = _context.Users.Where(c => c.Id == userId).FirstOrDefault();
+
+            if (userInfo.Address  == null || userInfo.Address.Length == 0) { return NotFound(new { message = "You need to provide your detailed Address before checking out!"}); }
+            if (userInfo.City == null || userInfo.City.Length == 0) { return NotFound(new { message = "You need to provide your City before checking out!" }); }
+            if (userInfo.District == null || userInfo.District.Length == 0) { return NotFound(new { message = "You need to provide your District before checking out!" }); }
+            if (userInfo.PhoneNumber == null || userInfo.PhoneNumber.Length < 8 || userInfo.PhoneNumber.Length > 12) { return NotFound(new { message = "You need to provide your PhoneNumber before checking out!" }); }
+
+            // Generate Order i
+            var orderId = GenerateOrderId();
+
+                // Get the user's cart
+                var userCart = await _context.Cart.Include(c => c.Book).Where(c => c.Book.BookId == c.BookId).Where(c => c.UserId == userId).ToListAsync();
+                if (userCart == null || !userCart.Any())
+                {
+                    return BadRequest(new { message = "Cart is empty. Add more items to the cart before checking out." });
+                }
+                // Calculate the total price
+                var total = userCart.Sum(c => c.Quantity * c.Book.Price);
+                // Create an order
+                var order = new Order
+                {
+                    Id = orderId,
+                    UserId = userId,
+                    Total = total,
+                    Status = (int)OrderStatus.Pending,
+                };
+                _context.Order.Add(order);
+
+            // Create order details
+            foreach (var cartItem in userCart)
+                {
+                    var orderDetail = new OrderDetail
+                    {
+                        BookId = cartItem.BookId,
+                        OrderId = orderId,
+                        Price = cartItem.Book.Price,
+                        Quantity = cartItem.Quantity
+                    };
+
+                    // Add order detail to the context
+                    _context.OrderDetail.Add(orderDetail);
+
+                    // Remove cart item
+                    _context.Cart.Remove(cartItem);
+                }
+
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Check Out Successfully!"});
+            //}
+            //catch (Exception e)
+            //{
+            //    return BadRequest();
+            //}
         }
-        // PUT: api/Carts/5
+        // Patch: api/Carts/edit/
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCart(int id, Cart cart)
+        [HttpPatch("edit/{bookid}/{quantity}")]
+        public async Task<IActionResult> Edit(int bookid, int? quantity)
         {
-            if (id != cart.Id)
+            try
+            {
+
+                var userId = getUserId();
+                if (userId == null)
+                {
+                    return Unauthorized();
+                }
+
+                var item = await _context.Cart.Where(c => c.BookId == bookid).Where(c => c.UserId == userId).FirstOrDefaultAsync();
+
+                if (item == null)
+                {
+                    return NotFound(new { Message = "Book Not Found!" });
+                }
+
+                _context.Cart.Update(item);
+                return Ok("Cart Updated successfully");
+            }
+            catch (Exception ex)
             {
                 return BadRequest();
             }
-
-            _context.Entry(cart).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CartExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
         }
-
-        // POST: api/Carts
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Cart>> PostCart(Cart cart)
+        // 204 : No Content
+        // DELETE: api/Carts/delete
+        [HttpDelete("delete/{bookid}")]
+        public async Task<IActionResult> DeleteCart(int bookid)
         {
-          if (_context.Cart == null)
-          {
-              return Problem("Entity set 'AppDbContext.Cart'  is null.");
-          }
-            _context.Cart.Add(cart);
+            var userId = getUserId();
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var item = await _context.Cart.Where(c => c.BookId == bookid).Where(c => c.UserId == userId).FirstOrDefaultAsync();
+            if (item == null)
+            {
+                return NotFound(new { Message = "Book Not Found!" });
+            }
+
+            _context.Cart.Remove(item);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCart", new { id = cart.Id }, cart);
+            return Ok(new { Message = "Deleted" });
         }
 
-        // DELETE: api/Carts/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCart(int id)
+        // 204 : No Content
+        [HttpDelete("deleteall")]
+        public async Task<IActionResult> DeleteCart()
         {
-            if (_context.Cart == null)
+            var userId = getUserId();
+
+            if (userId == null)
             {
-                return NotFound();
-            }
-            var cart = await _context.Cart.FindAsync(id);
-            if (cart == null)
-            {
-                return NotFound();
+                return Unauthorized();
             }
 
-            _context.Cart.Remove(cart);
+            var item = await _context.Cart.Where(c => c.UserId == userId).FirstOrDefaultAsync();
+            if (item == null)
+            {
+                return NotFound(new { Message = "Empty Cart!" });
+            }
+            _context.Cart.Remove(item);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { Message = "Deleted" });
         }
 
         private bool CartExists(int id)
