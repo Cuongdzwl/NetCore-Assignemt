@@ -42,7 +42,7 @@ namespace NetCore_Assignemt.Data.Migrations
                     Email = "admin@gmail.com",
                     NormalizedEmail = "ADMIN@GMAIL.COM",
                     EmailConfirmed = true,
-                    PasswordHash = new PasswordHasher<User>().HashPassword(null, "YourPassword"),
+                    PasswordHash = new PasswordHasher<User>().HashPassword(null, "P@ssw0rd"),
                     SecurityStamp = string.Empty
                 },
                 new User
@@ -53,7 +53,7 @@ namespace NetCore_Assignemt.Data.Migrations
                     Email = "test1@gmail.com",
                     NormalizedEmail = "TEST1@GMAIL.COM",
                     EmailConfirmed = true,
-                    PasswordHash = new PasswordHasher<User>().HashPassword(null, "YourAdminPassword"),
+                    PasswordHash = new PasswordHasher<User>().HashPassword(null, "P@ssw0rd"),
                     SecurityStamp = string.Empty
                 }
             );
