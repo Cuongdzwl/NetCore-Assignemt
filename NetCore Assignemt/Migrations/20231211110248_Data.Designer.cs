@@ -12,7 +12,7 @@ using NetCore_Assignemt.Data;
 namespace NetCore_Assignemt.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231211074720_Data")]
+    [Migration("20231211110248_Data")]
     partial class Data
     {
         /// <inheritdoc />
@@ -283,14 +283,14 @@ namespace NetCore_Assignemt.Migrations
                         {
                             Id = "3",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "155a81b8-74a9-446f-a7a2-d53dadd08cfb",
+                            ConcurrencyStamp = "237afdd2-1c11-44ed-9341-55ad9d249cc1",
                             DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFQMIhaj6Qu+9petNi4V7rNe0q7b7bsYz6tMy9sPZzFEjQpHhKFqgAAie9AitVxe7A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEG0NIXsbmV1IgZzGYNMtxKTcnVgNiwfsLW8blu1wPJ1RX7xtWTtP9Asd98J6KxOP1Q==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -300,14 +300,14 @@ namespace NetCore_Assignemt.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d30fd051-2d62-4681-bae3-c9c0b3a40ccb",
+                            ConcurrencyStamp = "3253860f-03b8-4882-823e-3f3b43e87a97",
                             DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "mode@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "MODE@GMAIL.COM",
                             NormalizedUserName = "MODE@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEM3lBEzCzcZPFU+/pMVdTGCkVOxnTdhKgqNBHp8loFHfBQJ3/NZJH5TLhQd74/yIhA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKRy+62fCj3iwroP66sil2ylZPlpMg2Ul/Gk6gPN6/v3ceaAanAGjHOX3I5EUPbx/g==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -317,14 +317,14 @@ namespace NetCore_Assignemt.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "34368565-c22e-44fa-897a-e3c2f06fb607",
+                            ConcurrencyStamp = "9661dbdd-ccf2-417c-800e-35e404465945",
                             DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "test1@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "TEST1@GMAIL.COM",
                             NormalizedUserName = "TEST1@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEA9yMD150ozE7+4Uk6MFpgkCAgEtxTfc+vcyvAjBK+F501yOfFY+W2rDjNOQ1yPgWQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGsCuSpUPkWOjRZyRDqpVMB5hpzk/9DHt1O3oxzfYeQo9R5wlFdKvHr6jDBAKiTFgg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -362,8 +362,6 @@ namespace NetCore_Assignemt.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookId"));
 
                     b.Property<DateTime?>("CreatedDate")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -474,11 +472,8 @@ namespace NetCore_Assignemt.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<byte[]>("CreatedDate")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
