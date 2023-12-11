@@ -27,6 +27,23 @@ namespace NetCore_Assignemt.Controllers
             return View();
         }
 
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null || _db.Book == null)
+            {
+                return NotFound();
+            }
+
+            var book = await _db.Book
+                .FirstOrDefaultAsync(m => m.BookId == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            return View(book);
+        }
+
         public IActionResult Privacy()
         {
             return View();

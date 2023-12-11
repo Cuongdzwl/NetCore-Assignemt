@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Detail";
+}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        padding: 20px;
+    }
+
+    .detail-container {
+        max-width: 600px;
+        margin: auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
+
+    h2 {
+        color: midnightblue;
+    }
+
+    p {
+        margin-bottom: 10px;
+    }
+
+    .btn {
+        margin-right: 10px;
+    }
+</style>
+
+<div class="detail-container">
+    <img src="~/images/@Model.ImagePath" alt="Book Image" width="200" height="200" />
+    <h2>@Model.Title</h2>
+    <p>Description: @Model.Description</p>
+    <p>Price: @Model.Price</p>
+
+    <a asp-action="AddCart" asp-route-id="@Model.BookId" class="btn btn-primary"><i class="fa-solid fa-cart-plus"></i></a>
+    <a asp-action="ListCart" class="btn btn-success"><i class="fa-solid fa-cart-shopping"></i></a>
+    <a asp-action="Index" class="btn btn-secondary"><i class="fa-solid fa-left-long"></i></a>
+</div>
+

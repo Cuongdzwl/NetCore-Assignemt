@@ -20,7 +20,7 @@ namespace NetCore_Assignemt.Controllers
         {
             _context = context;
         }
-        [Authorize(Roles = "ADMIN")]
+        //[Authorize(Roles = "Admin")]
         // GET: Books
         public async Task<IActionResult> Index()
         {

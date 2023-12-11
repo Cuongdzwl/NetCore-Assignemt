@@ -24,7 +24,7 @@ namespace NetCore_Assignemt.Controllers
         public async Task<IActionResult> Index()
         {
             var appDbContext = _context.Order.Include(o => o.User);
-            return View(await appDbContext.ToListAsync());
+            return View("Order",await appDbContext.ToListAsync());
         }
 
         public async Task<IActionResult> MyOrders()

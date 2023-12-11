@@ -1,0 +1,71 @@
+﻿@model IEnumerable<NetCore_Assignemt.Models.Order>
+
+@{
+    ViewData["Title"] = "Order";
+}
+
+<h1>Order</h1>
+
+<div class="container" style="padding-top: 120px; min-height:">
+    <div class="row">
+        <div class="col-md-12">
+            <h5>Order List
+
+                <p>
+                    <a asp-action="Create">Create New</a>
+                </p>
+            </h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Total)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreatedDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PayStatus)
+                </th>
+                <th>Funtion</th>
+            </tr>
+        </div>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @item.Total
+                </td>
+                <td>
+                    @item.Status
+                </td>
+                <td>
+                    @item.CreatedDate
+                </td>
+                <td>
+                    @item.PayStatus
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
+    </div>  
+</div>
+</table>
+
+
