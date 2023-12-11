@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace NetCore_Assignemt.Migrations
 {
     /// <inheritdoc />
-    public partial class _1 : Migration
+    public partial class Data : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -337,6 +339,36 @@ namespace NetCore_Assignemt.Migrations
                         principalTable: "Order",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "1", null, "User", "USER" },
+                    { "2", null, "Mode", "MODE" },
+                    { "3", null, "Admin", "ADMIN" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "Address", "City", "ConcurrencyStamp", "DOB", "District", "Email", "EmailConfirmed", "Gender", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { "1", 0, null, null, "34368565-c22e-44fa-897a-e3c2f06fb607", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "test1@gmail.com", true, null, false, null, "TEST1@GMAIL.COM", "TEST1@GMAIL.COM", "AQAAAAIAAYagAAAAEA9yMD150ozE7+4Uk6MFpgkCAgEtxTfc+vcyvAjBK+F501yOfFY+W2rDjNOQ1yPgWQ==", null, false, "", false, "test1@gmail.com" },
+                    { "2", 0, null, null, "d30fd051-2d62-4681-bae3-c9c0b3a40ccb", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "mode@gmail.com", true, null, false, null, "MODE@GMAIL.COM", "MODE@GMAIL.COM", "AQAAAAIAAYagAAAAEM3lBEzCzcZPFU+/pMVdTGCkVOxnTdhKgqNBHp8loFHfBQJ3/NZJH5TLhQd74/yIhA==", null, false, "", false, "mode@gmail.com" },
+                    { "3", 0, null, null, "155a81b8-74a9-446f-a7a2-d53dadd08cfb", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "admin@gmail.com", true, null, false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEFQMIhaj6Qu+9petNi4V7rNe0q7b7bsYz6tMy9sPZzFEjQpHhKFqgAAie9AitVxe7A==", null, false, "", false, "admin@gmail.com" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { "1", "1" },
+                    { "2", "2" },
+                    { "3", "3" }
                 });
 
             migrationBuilder.CreateIndex(

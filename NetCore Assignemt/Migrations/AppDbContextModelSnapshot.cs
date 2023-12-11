@@ -47,6 +47,26 @@ namespace NetCore_Assignemt.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Name = "Mode",
+                            NormalizedName = "MODE"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -136,6 +156,23 @@ namespace NetCore_Assignemt.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1",
+                            RoleId = "1"
+                        },
+                        new
+                        {
+                            UserId = "2",
+                            RoleId = "2"
+                        },
+                        new
+                        {
+                            UserId = "3",
+                            RoleId = "3"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -237,6 +274,59 @@ namespace NetCore_Assignemt.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "3",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "155a81b8-74a9-446f-a7a2-d53dadd08cfb",
+                            DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "admin@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@GMAIL.COM",
+                            NormalizedUserName = "ADMIN@GMAIL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFQMIhaj6Qu+9petNi4V7rNe0q7b7bsYz6tMy9sPZzFEjQpHhKFqgAAie9AitVxe7A==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@gmail.com"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "d30fd051-2d62-4681-bae3-c9c0b3a40ccb",
+                            DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "mode@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "MODE@GMAIL.COM",
+                            NormalizedUserName = "MODE@GMAIL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEM3lBEzCzcZPFU+/pMVdTGCkVOxnTdhKgqNBHp8loFHfBQJ3/NZJH5TLhQd74/yIhA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            TwoFactorEnabled = false,
+                            UserName = "mode@gmail.com"
+                        },
+                        new
+                        {
+                            Id = "1",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "34368565-c22e-44fa-897a-e3c2f06fb607",
+                            DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "test1@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "TEST1@GMAIL.COM",
+                            NormalizedUserName = "TEST1@GMAIL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEA9yMD150ozE7+4Uk6MFpgkCAgEtxTfc+vcyvAjBK+F501yOfFY+W2rDjNOQ1yPgWQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "",
+                            TwoFactorEnabled = false,
+                            UserName = "test1@gmail.com"
+                        });
                 });
 
             modelBuilder.Entity("NetCore_Assignemt.Models.Author", b =>
