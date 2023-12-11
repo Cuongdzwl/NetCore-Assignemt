@@ -26,7 +26,8 @@ namespace NetCore_Assignemt.Data
         {
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = "1", Name = "User", NormalizedName = "USER" },
-                new IdentityRole { Id = "2", Name = "Admin", NormalizedName = "ADMIN" }
+                new IdentityRole { Id = "2", Name = "Mode", NormalizedName = "MODE" },
+                new IdentityRole { Id = "3", Name = "Admin", NormalizedName = "ADMIN" }
             );
         }
 
@@ -36,7 +37,7 @@ namespace NetCore_Assignemt.Data
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
-                    Id = "1",
+                    Id = "3",
                     UserName = "admin@gmail.com",
                     NormalizedUserName = "ADMIN@GMAIL.COM",
                     Email = "admin@gmail.com",
@@ -45,9 +46,20 @@ namespace NetCore_Assignemt.Data
                     PasswordHash = new PasswordHasher<User>().HashPassword(null, "P@ssw0rd"),
                     SecurityStamp = string.Empty
                 },
+                 new User
+                 {
+                     Id = "2",
+                     UserName = "mode@gmail.com",
+                     NormalizedUserName = "MODE@GMAIL.COM",
+                     Email = "mode@gmail.com",
+                     NormalizedEmail = "MODE@GMAIL.COM",
+                     EmailConfirmed = true,
+                     PasswordHash = new PasswordHasher<User>().HashPassword(null, "P@ssw0rd"),
+                     SecurityStamp = string.Empty
+                 },
                 new User
                 {
-                    Id = "2",
+                    Id = "1",
                     UserName = "test1@gmail.com",
                     NormalizedUserName = "TEST1@GMAIL.COM",
                     Email = "test1@gmail.com",
@@ -60,7 +72,8 @@ namespace NetCore_Assignemt.Data
 
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(
                 new IdentityUserRole<string> { UserId = "1", RoleId = "1" }, // User role
-                new IdentityUserRole<string> { UserId = "2", RoleId = "2" }  // Admin role
+                new IdentityUserRole<string> { UserId = "2", RoleId = "2" }, // Mode role
+                new IdentityUserRole<string> { UserId = "3", RoleId = "3" }  // Admin role
             );
         }
         public DbSet<Book> Book { get; set; } = default!;
