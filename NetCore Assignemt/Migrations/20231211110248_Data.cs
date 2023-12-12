@@ -83,7 +83,7 @@ namespace NetCore_Assignemt.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", rowVersion: true, nullable: true)
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -97,7 +97,7 @@ namespace NetCore_Assignemt.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedDate = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -356,9 +356,9 @@ namespace NetCore_Assignemt.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "Address", "City", "ConcurrencyStamp", "DOB", "District", "Email", "EmailConfirmed", "Gender", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "1", 0, null, null, "34368565-c22e-44fa-897a-e3c2f06fb607", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "test1@gmail.com", true, null, false, null, "TEST1@GMAIL.COM", "TEST1@GMAIL.COM", "AQAAAAIAAYagAAAAEA9yMD150ozE7+4Uk6MFpgkCAgEtxTfc+vcyvAjBK+F501yOfFY+W2rDjNOQ1yPgWQ==", null, false, "", false, "test1@gmail.com" },
-                    { "2", 0, null, null, "d30fd051-2d62-4681-bae3-c9c0b3a40ccb", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "mode@gmail.com", true, null, false, null, "MODE@GMAIL.COM", "MODE@GMAIL.COM", "AQAAAAIAAYagAAAAEM3lBEzCzcZPFU+/pMVdTGCkVOxnTdhKgqNBHp8loFHfBQJ3/NZJH5TLhQd74/yIhA==", null, false, "", false, "mode@gmail.com" },
-                    { "3", 0, null, null, "155a81b8-74a9-446f-a7a2-d53dadd08cfb", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "admin@gmail.com", true, null, false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEFQMIhaj6Qu+9petNi4V7rNe0q7b7bsYz6tMy9sPZzFEjQpHhKFqgAAie9AitVxe7A==", null, false, "", false, "admin@gmail.com" }
+                    { "1", 0, null, null, "9661dbdd-ccf2-417c-800e-35e404465945", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "test1@gmail.com", true, null, false, null, "TEST1@GMAIL.COM", "TEST1@GMAIL.COM", "AQAAAAIAAYagAAAAEGsCuSpUPkWOjRZyRDqpVMB5hpzk/9DHt1O3oxzfYeQo9R5wlFdKvHr6jDBAKiTFgg==", null, false, "", false, "test1@gmail.com" },
+                    { "2", 0, null, null, "3253860f-03b8-4882-823e-3f3b43e87a97", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "mode@gmail.com", true, null, false, null, "MODE@GMAIL.COM", "MODE@GMAIL.COM", "AQAAAAIAAYagAAAAEKRy+62fCj3iwroP66sil2ylZPlpMg2Ul/Gk6gPN6/v3ceaAanAGjHOX3I5EUPbx/g==", null, false, "", false, "mode@gmail.com" },
+                    { "3", 0, null, null, "237afdd2-1c11-44ed-9341-55ad9d249cc1", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "admin@gmail.com", true, null, false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEG0NIXsbmV1IgZzGYNMtxKTcnVgNiwfsLW8blu1wPJ1RX7xtWTtP9Asd98J6KxOP1Q==", null, false, "", false, "admin@gmail.com" }
                 });
 
             migrationBuilder.InsertData(
