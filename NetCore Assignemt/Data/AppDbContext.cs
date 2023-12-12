@@ -16,8 +16,6 @@ namespace NetCore_Assignemt.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Các đoạn mã cấu hình khác của bạn
-
             SeedRoles(modelBuilder);
             SeedUsers(modelBuilder);
         }
@@ -26,14 +24,13 @@ namespace NetCore_Assignemt.Data
         {
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = "1", Name = "User", NormalizedName = "USER" },
-                new IdentityRole { Id = "2", Name = "Mode", NormalizedName = "MODE" },
+                new IdentityRole { Id = "2", Name = "Mod", NormalizedName = "MOD" },
                 new IdentityRole { Id = "3", Name = "Admin", NormalizedName = "ADMIN" }
             );
         }
 
         private void SeedUsers(ModelBuilder modelBuilder)
         {
-            // Chú ý: Trong trường hợp thực tế, bạn có thể cần tạo password hash thay vì lưu trực tiếp password
             modelBuilder.Entity<User>().HasData(
                 new User
                 {

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace NetCore_Assignemt.Migrations
 {
     /// <inheritdoc />
-    public partial class Data : Migration
+    public partial class finale : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -218,7 +218,7 @@ namespace NetCore_Assignemt.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
                     Total = table.Column<double>(type: "float", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", rowVersion: true, nullable: false),
                     PaymentTranId = table.Column<long>(type: "bigint", nullable: true),
                     BankCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PayStatus = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -347,7 +347,7 @@ namespace NetCore_Assignemt.Migrations
                 values: new object[,]
                 {
                     { "1", null, "User", "USER" },
-                    { "2", null, "Mode", "MODE" },
+                    { "2", null, "Mod", "MOD" },
                     { "3", null, "Admin", "ADMIN" }
                 });
 
@@ -356,9 +356,9 @@ namespace NetCore_Assignemt.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "Address", "City", "ConcurrencyStamp", "DOB", "District", "Email", "EmailConfirmed", "Gender", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "1", 0, null, null, "9661dbdd-ccf2-417c-800e-35e404465945", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "test1@gmail.com", true, null, false, null, "TEST1@GMAIL.COM", "TEST1@GMAIL.COM", "AQAAAAIAAYagAAAAEGsCuSpUPkWOjRZyRDqpVMB5hpzk/9DHt1O3oxzfYeQo9R5wlFdKvHr6jDBAKiTFgg==", null, false, "", false, "test1@gmail.com" },
-                    { "2", 0, null, null, "3253860f-03b8-4882-823e-3f3b43e87a97", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "mode@gmail.com", true, null, false, null, "MODE@GMAIL.COM", "MODE@GMAIL.COM", "AQAAAAIAAYagAAAAEKRy+62fCj3iwroP66sil2ylZPlpMg2Ul/Gk6gPN6/v3ceaAanAGjHOX3I5EUPbx/g==", null, false, "", false, "mode@gmail.com" },
-                    { "3", 0, null, null, "237afdd2-1c11-44ed-9341-55ad9d249cc1", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "admin@gmail.com", true, null, false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEG0NIXsbmV1IgZzGYNMtxKTcnVgNiwfsLW8blu1wPJ1RX7xtWTtP9Asd98J6KxOP1Q==", null, false, "", false, "admin@gmail.com" }
+                    { "1", 0, null, null, "14341078-1e15-49d9-a4ff-bc0386b2f93b", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "test1@gmail.com", true, null, false, null, "TEST1@GMAIL.COM", "TEST1@GMAIL.COM", "AQAAAAIAAYagAAAAEJF1YnV6SeYmVqiX+j61steRqs/rNQ7JYh09pXMjEg1sAJjKrSyp7z1YS46KjVxWvw==", null, false, "", false, "test1@gmail.com" },
+                    { "2", 0, null, null, "8f3e2f6f-6194-4cd8-9e26-ed0d17a35ca2", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "mode@gmail.com", true, null, false, null, "MODE@GMAIL.COM", "MODE@GMAIL.COM", "AQAAAAIAAYagAAAAEGtX1ZicQT5VNV4rwFnCB4yoo7hh9vOB/XmbRri0Jh9OW1sKeyvN2x45QXHI4hKnRA==", null, false, "", false, "mode@gmail.com" },
+                    { "3", 0, null, null, "fd8b2d60-a3e2-4adf-9168-536c4f3ed69b", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "admin@gmail.com", true, null, false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEL6esCDB0cxFXstU5BvTXAk4gBLdRrGKAGyIX/joA7nNH6EWRCEPHT04mafG3IxMHg==", null, false, "", false, "admin@gmail.com" }
                 });
 
             migrationBuilder.InsertData(
