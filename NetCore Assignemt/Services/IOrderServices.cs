@@ -6,11 +6,12 @@ namespace NetCore_Assignemt.Services
 {
     public interface IOrderServices
     {
-        public Task<IActionResult> PayAsync(int orderid);
+        public Task<IActionResult> Pay(long id);
 
-        public Task<IActionResult> CancelAsync(int orderid);
+        public Task<IActionResult> Cancel(long id);
 
+        public IActionResult Return();
         // API
-        public Task<IActionResult> NextStage(int orderid);
+        public Task<IActionResult> NextStage(long id);
     }
 }
