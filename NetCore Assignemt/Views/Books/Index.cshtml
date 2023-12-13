@@ -1,17 +1,21 @@
 ﻿@model IEnumerable<NetCore_Assignemt.Models.Book>
 
-@{
-    ViewData["Title"] = "Index";
-}
+<div class="container" style="padding-top: 120px; min-height:">
+    <div class="row">
+        <div class="col-md-12">
+            <h5>
+                Order List
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
+                <p>
+                    <a asp-action="Create">Create New</a>
+                </p>
+            </h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+            <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Title)
             </th>
@@ -33,39 +37,41 @@
             <th>
                 @Html.DisplayNameFor(model => model.CreatedDate)
             </th>
-            <th></th>
+            <th>funtion</th>
         </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Publisher)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImagePath)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.BookId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BookId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
+        </div>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Publisher)
+                </td>
+                <td>
+                    <img src="/images/@item.ImagePath" class="img-responsive" width="200" height="200" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.BookId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.BookId">Delete</a>
+                </td>
+            </tr>
+        }
+    </div>
+</div>
 </table>
+

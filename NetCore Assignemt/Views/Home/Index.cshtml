@@ -1,74 +1,35 @@
 ﻿@using NetCore_Assignemt.Areas.Identity.Data
 @inject Microsoft.AspNetCore.Identity.UserManager<User> UserManager
-@{
-    ViewData["Title"] = "Home Page";
-}
 
-<!-- Example link to navigate to the role creation page -->
-<a asp-controller="Roles" asp-action="Create">Create Role</a>
-<a asp-controller="Admin" asp-action="SetRoles" asp-route-userId="@UserManager.GetUserId(User)">Set Roles</a>
-  
 @model IEnumerable<NetCore_Assignemt.Models.Book>
 
 @{
     ViewData["Title"] = "Home Page";
 }
+<div class="my-4 text-align:center">GreenWich BookStore</div>
 
-<style>
-    .List-book {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-        margin: -10px; /* Negative margin to create space between items */
-    }
 
-    .product-card {
-        flex: 0 0 calc(30% - 20px); /* Adjust the width to fit three items per row */
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 16px;
-        margin: 10px; /* Adjust the margin to create space between items */
-        text-align: center;
-    }
-
-        .product-card img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
-        }
-
-        .product-card .title {
-            display: block;
-            margin-top: 8px;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-            .product-card .title a {
-                color: inherit;
-            }
-
-        .product-card .addBook {
-            display: inline-block;
-            margin-top: 8px;
-            padding: 8px 16px;
-            background-color: midnightblue;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-</style>
-
-<div class="List-book">
+<div class="row">
     @foreach (var item in ViewBag.Book)
     {
-        <div class="product-card">
-            <a asp-controller="Home" asp-action="Details" asp-route-id="@item.BookId"><img src="/images/@item.ImagePath" class="img-responsive" width="200" height="200" /></a>
-            <span class="title"><a asp-action="Details" asp-route-id="@item.BookId">@item.Title</a></span>
-            <a asp-controller="Home" asp-action="AddCart" asp-route-id="@item.BookId" class="addBook"><i class="fa-solid fa-cart-plus"></i></a>
+        <div class="col-3">
+            <div class="card my-2 store-card">
+                <a asp-controller="Home" asp-action="Details" asp-route-id="@item.BookId">
+                    <img src="/images/@item.ImagePath" class="card-img-top card-img-custom">
+                    <div class="card-body" style="height: 6em;">
+                        <h5 class="mb-3">@item.Title</h5>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-text">@item.Price</span>
+                        <a asp-controller="" asp-action="" asp-route-id="@item.BookId" class="btn btn-primary float-right"><i class="fa-solid fa-cart-shopping"></i></a>
+                    </div>
+                </a>
+            </div>
         </div>
     }
 </div>
+
+
 
 
 

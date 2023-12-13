@@ -1,42 +1,59 @@
-﻿@{
+﻿@model NetCore_Assignemt.Models.Book
+@{
     ViewData["Title"] = "Detail";
 }
 
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f8f9fa;
-        padding: 20px;
-    }
-
-    .detail-container {
-        max-width: 600px;
-        margin: auto;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-    }
-
-    img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 5px;
-    }
-
-    h2 {
-        color: midnightblue;
-    }
-
-    p {
-        margin-bottom: 10px;
-    }
-
-    .btn {
-        margin-right: 10px;
-    }
-</style>
+<div class="row">
+    <div class="col-5">
+        <div>
+            <h4>Book</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Title)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Title)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Publisher)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Publisher)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Price)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Price)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Quantity)
+                </dd>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.CreatedDate)
+                </dd>
+            </dl>
+        </div>
+        <div>
+            <a asp-action="Index">Back to List</a>
+            <button onclick="addToCart(@Model.BookId,1)">Add to Cart</button>
+        </div>
+    </div>
+    <div class="col-4">
+        <img src="~/images/@Model.ImagePath" alt="Book Image" width="200" height="200" />
+    </div>
+</div>
+@* </style>
 
 <div class="detail-container">
     <img src="~/images/@Model.ImagePath" alt="Book Image" width="200" height="200" />
@@ -48,4 +65,4 @@
     <a asp-action="ListCart" class="btn btn-success"><i class="fa-solid fa-cart-shopping"></i></a>
     <a asp-action="Index" class="btn btn-secondary"><i class="fa-solid fa-left-long"></i></a>
 </div>
-
+ *@
