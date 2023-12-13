@@ -40,6 +40,7 @@ namespace NetCore_Assignemt.Controllers
 
         public IActionResult Cart()
         {
+            ViewBag.Cart = _db.Cart.ToList();
             return View();
         }
     }
