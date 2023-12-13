@@ -54,6 +54,7 @@ builder.Services.AddAuthentication().AddFacebook(options =>
     options.ClientSecret = FACEBOOK_CLIENT_SECRET;
 });
 
+
 // Identity
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
@@ -64,6 +65,12 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(cfg => {                    
 cfg.Cookie.Name = "Test";             
 cfg.IdleTimeout = new TimeSpan(0, 60, 0);
+});
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    //options.IdleTimeout = TimeSpan.FromSeconds(5);
 });
 
 
@@ -102,8 +109,8 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();

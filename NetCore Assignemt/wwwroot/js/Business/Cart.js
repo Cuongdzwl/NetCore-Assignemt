@@ -24,6 +24,7 @@ function addToCart(bookId, quantity) {
 
             window.location.href = newPage;
         }
+
     });
 }
 function editCart(bookId, quatity) {
