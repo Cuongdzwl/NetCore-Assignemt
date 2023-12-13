@@ -60,7 +60,7 @@ namespace NetCore_Assignemt.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e.ToString());
+                _logger.LogError(e.ToString()); 
             }
         }
     }

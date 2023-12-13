@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
 using NetCore_Assignemt.Services;
+using NetCore_Assignemt.Services.DTO;
 
 namespace NetCore_Assignemt.Controllers
 {
@@ -200,8 +202,22 @@ namespace NetCore_Assignemt.Controllers
             string url = _payment.Pay(order, null, ipAddress, out flag);
             // Check  if URL build Success
             if (!flag) return BadRequest();
-            _logger.LogInformation(url);
+
             return Redirect(url);
+        }
+        [HttpGet]
+        public IActionResult Return([FromQuery]VnPayCallbackDTO callback)
+        {
+            string rawUrl = HttpContext.Request.QueryString + "";
+
+            _logger.LogInformation(rawUrl.ToString());   
+
+            if (_payment.CallBackValidate(callback,rawUrl))
+            {
+                return View("Return", callback);
+            }
+
+            return Redirect("/orders");
         }
 
         public Task<IActionResult> Cancel(long id)
@@ -209,10 +225,7 @@ namespace NetCore_Assignemt.Controllers
             throw new NotImplementedException();
         }
 
-        public IActionResult Return()
-        {
-            throw new NotImplementedException();
-        }
+
 
         public Task<IActionResult> NextStage(long id)
         {
