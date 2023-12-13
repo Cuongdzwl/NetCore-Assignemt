@@ -3,6 +3,8 @@ using System.Globalization;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Http;
+using SQLitePCL;
 
 namespace NetCore_Assignemt.Common
 {
@@ -74,37 +76,46 @@ namespace NetCore_Assignemt.Common
 
         #region Response process
 
-        public bool ValidateSignature(string inputHash, string secretKey)
+        public bool ValidateSignature(string inputHash, string secretKey, string raw)
         {
-            string rspRaw = GetResponseData();
-            string myChecksum = Utils.HmacSHA512(secretKey, rspRaw);
+            // Process raw
+            raw = raw.Trim();
+            raw = RemoveParameterFromQueryString(raw, "vnp_SecureHash");
+            raw = RemoveParameterFromQueryString(raw, "vnp_SecureHashType");
+            raw = raw.Substring(1);
+
+            string myChecksum = Utils.HmacSHA512(secretKey, raw);
             return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
         }
-        private string GetResponseData()
-        {
 
-            StringBuilder data = new StringBuilder();
-            if (_responseData.ContainsKey("vnp_SecureHashType"))
+        static string RemoveParameterFromQueryString(string queryString, string parameterName)
+        {
+            int index = queryString.IndexOf($"{parameterName}=");
+
+            if (index != -1)
             {
-                _responseData.Remove("vnp_SecureHashType");
-            }
-            if (_responseData.ContainsKey("vnp_SecureHash"))
-            {
-                _responseData.Remove("vnp_SecureHash");
-            }
-            foreach (KeyValuePair<string, string> kv in _responseData)
-            {
-                if (!String.IsNullOrEmpty(kv.Value))
+                // Find the position of the next "&" after the parameter
+                int endIndex = queryString.IndexOf('&', index);
+
+                // Remove the parameter and its value from the string
+                if (endIndex != -1)
                 {
-                    data.Append(WebUtility.UrlEncode(kv.Key) + "=" + WebUtility.UrlEncode(kv.Value) + "&");
+                    queryString = queryString.Remove(index, endIndex - index + 1);
                 }
+                else
+                {
+                    // If it's the last parameter, simply remove it
+                    queryString = queryString.Substring(0, index).TrimEnd('?');
+                }
+                // Remove & 
+                if (!string.IsNullOrEmpty(queryString) && queryString.EndsWith("&"))
+                {
+                    queryString = queryString.Substring(0, queryString.Length - 1);
+                }
+
             }
-            //remove last '&'
-            if (data.Length > 0)
-            {
-                data.Remove(data.Length - 1, 1);
-            }
-            return data.ToString();
+
+            return queryString;
         }
 
         #endregion
