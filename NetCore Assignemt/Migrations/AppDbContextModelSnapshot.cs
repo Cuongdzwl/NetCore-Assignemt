@@ -280,14 +280,14 @@ namespace NetCore_Assignemt.Migrations
                         {
                             Id = "3",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "82a5339a-bc5e-4448-aaf4-d7855beda93a",
+                            ConcurrencyStamp = "0d151d8a-7130-4c65-b850-c1730cb0a2a3",
                             DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELNRKteQnGJDpzr1PFCHhtJIeMNtpw+NizBOPlctVxowpCNYPSBswmr6Lf9TA1iqzw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJ6zhVWNN8nKw6uQ9qhqLom82qFvNExdORpaxvtzmyXsXQMC5NZBnrCM01QHUq5oww==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -297,14 +297,14 @@ namespace NetCore_Assignemt.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "94be1521-7152-453c-abf3-3f97212720e2",
+                            ConcurrencyStamp = "4e3bd9e7-13f5-4797-97ba-966680c2677e",
                             DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "mode@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "MODE@GMAIL.COM",
                             NormalizedUserName = "MODE@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEM6LndPjpeoMQ+v/Fae0TnOeVZF3X/Qu5rnEOBqcyjaHTardq8Qocos29A/zrHbE3g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFEix14gf27L9JvXlNcH2Nk8UzGRD+oRAE5oSJbo5SGGHK0x2sHSRB2Zf/G5y6MZtw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -314,14 +314,14 @@ namespace NetCore_Assignemt.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e5803474-7743-4bdf-a179-9ef6e5cd23f7",
+                            ConcurrencyStamp = "bebe160c-21a5-4b56-bea5-2a0b6f4b8df1",
                             DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "test1@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "TEST1@GMAIL.COM",
                             NormalizedUserName = "TEST1@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBzWtqI1Z76OWwM54ZntJ6crcUKRDTN1Jy/ooenE61b9YMD/c3YyAYWc13NpGOz38w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPhnVf2IuH2gmnF8WaHVL0D75a79sDB2uVvt1QOsPGVzgjZCgrc2GymHnH8iWjLzJA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -487,12 +487,14 @@ namespace NetCore_Assignemt.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("BankCode")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PayStatus")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long?>("PaymentTranId")
@@ -504,12 +506,17 @@ namespace NetCore_Assignemt.Migrations
                     b.Property<double>("Total")
                         .HasColumnType("float");
 
+                    b.Property<long?>("TransactionId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TransactionId");
 
                     b.HasIndex("UserId");
 
@@ -543,6 +550,46 @@ namespace NetCore_Assignemt.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("OrderDetail");
+                });
+
+            modelBuilder.Entity("NetCore_Assignemt.Models.Transaction", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("vnp_Amount")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("vnp_BankCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("vnp_BankTranNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("vnp_CardType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("vnp_OrderInfo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("vnp_PayDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("vnp_ResponseCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("vnp_TransactionNo")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("vnp_TransactionStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Transaction");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -655,11 +702,17 @@ namespace NetCore_Assignemt.Migrations
 
             modelBuilder.Entity("NetCore_Assignemt.Models.Order", b =>
                 {
+                    b.HasOne("NetCore_Assignemt.Models.Transaction", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionId");
+
                     b.HasOne("NetCore_Assignemt.Areas.Identity.Data.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Transaction");
 
                     b.Navigation("User");
                 });

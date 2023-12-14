@@ -82,7 +82,7 @@ namespace NetCore_Assignemt.Common
             raw = raw.Trim();
             raw = RemoveParameterFromQueryString(raw, "vnp_SecureHash");
             raw = RemoveParameterFromQueryString(raw, "vnp_SecureHashType");
-            raw = raw.Substring(1);
+            raw = raw.Substring(1); // remove first ?
 
             string myChecksum = Utils.HmacSHA512(secretKey, raw);
             return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
