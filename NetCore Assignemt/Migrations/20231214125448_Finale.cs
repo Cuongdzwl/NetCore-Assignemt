@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace NetCore_Assignemt.Migrations
 {
     /// <inheritdoc />
-    public partial class finale : Migration
+    public partial class Finale : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -102,6 +102,26 @@ namespace NetCore_Assignemt.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Category", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Transaction",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false),
+                    vnp_ResponseCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    vnp_Amount = table.Column<long>(type: "bigint", nullable: false),
+                    vnp_BankCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    vnp_BankTranNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    vnp_CardType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    vnp_OrderInfo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    vnp_PayDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    vnp_TransactionNo = table.Column<long>(type: "bigint", nullable: false),
+                    vnp_TransactionStatus = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transaction", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -211,30 +231,6 @@ namespace NetCore_Assignemt.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Order",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    Total = table.Column<double>(type: "float", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", rowVersion: true, nullable: false),
-                    PaymentTranId = table.Column<long>(type: "bigint", nullable: true),
-                    BankCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PayStatus = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Order", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Order_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "BookAuthor",
                 columns: table => new
                 {
@@ -314,6 +310,36 @@ namespace NetCore_Assignemt.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Order",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    Total = table.Column<double>(type: "float", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PaymentTranId = table.Column<long>(type: "bigint", nullable: true),
+                    BankCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PayStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactionId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Order", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Order_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Order_Transaction_TransactionId",
+                        column: x => x.TransactionId,
+                        principalTable: "Transaction",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrderDetail",
                 columns: table => new
                 {
@@ -356,9 +382,9 @@ namespace NetCore_Assignemt.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "Address", "City", "ConcurrencyStamp", "DOB", "District", "Email", "EmailConfirmed", "Gender", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "1", 0, null, null, "14341078-1e15-49d9-a4ff-bc0386b2f93b", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "test1@gmail.com", true, null, false, null, "TEST1@GMAIL.COM", "TEST1@GMAIL.COM", "AQAAAAIAAYagAAAAEJF1YnV6SeYmVqiX+j61steRqs/rNQ7JYh09pXMjEg1sAJjKrSyp7z1YS46KjVxWvw==", null, false, "", false, "test1@gmail.com" },
-                    { "2", 0, null, null, "8f3e2f6f-6194-4cd8-9e26-ed0d17a35ca2", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "mode@gmail.com", true, null, false, null, "MODE@GMAIL.COM", "MODE@GMAIL.COM", "AQAAAAIAAYagAAAAEGtX1ZicQT5VNV4rwFnCB4yoo7hh9vOB/XmbRri0Jh9OW1sKeyvN2x45QXHI4hKnRA==", null, false, "", false, "mode@gmail.com" },
-                    { "3", 0, null, null, "fd8b2d60-a3e2-4adf-9168-536c4f3ed69b", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "admin@gmail.com", true, null, false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEL6esCDB0cxFXstU5BvTXAk4gBLdRrGKAGyIX/joA7nNH6EWRCEPHT04mafG3IxMHg==", null, false, "", false, "admin@gmail.com" }
+                    { "1", 0, null, null, "29c85fbe-46a6-477d-8990-9f1cbcabfdff", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "test1@gmail.com", true, null, false, null, "TEST1@GMAIL.COM", "TEST1@GMAIL.COM", "AQAAAAIAAYagAAAAEN8U3NFwLn4u5B6nnvEyyfP0DGvc+Y98umHOR4WNVXXb7Q/HthH3mzjbKnSZNN5XYg==", null, false, "", false, "test1@gmail.com" },
+                    { "2", 0, null, null, "382205c4-7a9f-4e62-a018-89bd8bda1f54", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "mode@gmail.com", true, null, false, null, "MODE@GMAIL.COM", "MODE@GMAIL.COM", "AQAAAAIAAYagAAAAEG3CeWJikNPiy2QIYFoTVtthjq7CXZnQWQRrucOBoK5Ep5q5PhMzdasN840JeCExNg==", null, false, "", false, "mode@gmail.com" },
+                    { "3", 0, null, null, "b6866a6c-16b7-4991-9cbc-06349583236c", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "admin@gmail.com", true, null, false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEKsmmChnG24z5pHZCY0wldUwBFjGsUwp7zr69U0JgDoBqcEcBqppE9TCUW98s22Fiw==", null, false, "", false, "admin@gmail.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -441,6 +467,11 @@ namespace NetCore_Assignemt.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Order_TransactionId",
+                table: "Order",
+                column: "TransactionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Order_UserId",
                 table: "Order",
                 column: "UserId");
@@ -503,6 +534,9 @@ namespace NetCore_Assignemt.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Transaction");
         }
     }
 }
