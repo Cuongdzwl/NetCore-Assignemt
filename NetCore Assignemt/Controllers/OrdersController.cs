@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
 using NetCore_Assignemt.Services;
 using NetCore_Assignemt.Services.DTO;
+using sib_api_v3_sdk.Model;
 
 namespace NetCore_Assignemt.Controllers
 {
@@ -29,7 +31,10 @@ namespace NetCore_Assignemt.Controllers
             _payment = paymentServices;
             _logger = logger;
         }
-
+        private string? getUserId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
         // GET: Orders
         public async Task<IActionResult> Index()
         {
@@ -75,7 +80,7 @@ namespace NetCore_Assignemt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] Order order)
+        public async Task<IActionResult> Create([Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] NetCore_Assignemt.Models.Order order)
         {
             if (ModelState.IsValid)
             {
@@ -109,7 +114,7 @@ namespace NetCore_Assignemt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] Order order)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] Models.Order order)
         {
             if (id != order.Id)
             {
@@ -212,11 +217,12 @@ namespace NetCore_Assignemt.Controllers
         private PaymentResponseDTO UpdateOrderInfo(VnPayCallbackDTO callback)
         {
             string message;
+            // Find Order
             var order = _context.Order.FirstOrDefault(x => x.Id == callback.vnp_TxnRef);
 
             if (order == null) return new PaymentResponseDTO { RspCode = "-01", Message = "Order Not Found" };
 
-            var paymentId = DateTime.Now.Ticks;
+            var paymentId = callback.vnp_TransactionNo;
             // Update to Db
             _context.Transaction.Add(new Transaction
             {
@@ -233,40 +239,39 @@ namespace NetCore_Assignemt.Controllers
             });
 
             // Check Responsecode
-            switch (callback.vnp_ResponseCode)
+            PaymentServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
+
+            if (message == null) message = "Unknown Error!";
+            // Update Inventory
+            if (callback.vnp_ResponseCode == "00" && callback.vnp_TransactionStatus == "00")
             {
-                case "00":
-                    message = "Transaction successful";
-                    break;
-                case "01":
-                    message = "Transaction not completed";
-                    break;
-                case "02":
-                    message = "Transaction error";
-                    break;
-                case "04":
-                    message = "Reversed transaction (Customer has been debited at the bank but the transaction has not been successful at VNPAY)";
-                    break;
-                case "05":
-                    message = "VNPAY is processing this transaction (Refund in progress)";
-                    break;
-                case "06":
-                    message = "VNPAY has sent a refund request to the bank (Refund in progress)";
-                    break;
-                case "07":
-                    message = "Transaction suspected of fraud";
-                    break;
-                case "09":
-                    message = "Refund request denied";
-                    break;
-                default:
-                    message = "Unknown response code";
-                    break;
+                var orderDetails = _context.OrderDetail
+                .Where(od => od.OrderId == order.Id)
+                .ToList();
+
+                // Update book quantities based on order details
+                foreach (var orderDetail in orderDetails)
+                {
+                    var book = _context.Book.Find(orderDetail.BookId);
+
+                    if (book != null)
+                    {
+                        // Update book quantity based on order detail quantity
+                        book.Quantity -= orderDetail.Quantity;
+
+                    }
+                }
+                order.Status = (int)OrderStatus.Packaging;
+            }
+            else
+            {
+                order.Status = (int)OrderStatus.Canceled;
             }
 
             order.PaymentTranId = paymentId;
             order.BankCode = callback.vnp_BankCode;
             order.PayStatus = message;
+
 
             _context.Order.Update(order);
 
@@ -292,13 +297,17 @@ namespace NetCore_Assignemt.Controllers
 
         [HttpGet]
         [Route("/IPN")]
-        public IActionResult IPN([FromQuery] VnPayCallbackDTO callback)
+        public async Task<IActionResult> IPN([FromQuery] VnPayCallbackDTO callback)
         {
+            // Debug WIP
             _logger.LogInformation("IPN Catched: " + HttpContext.Request.QueryString);
+
             string rawUrl = HttpContext.Request.QueryString + "";
+            // Get order info
+            var order = await _context.Order.FirstOrDefaultAsync(c => c.Id == callback.vnp_TxnRef);
 
             // Encoding Response
-            using (var result = new StringContent(_payment.InstantPaymentNotification(callback, rawUrl), System.Text.Encoding.UTF8, "application/json"))
+            using (var result = new StringContent(_payment.InstantPaymentNotification(callback, rawUrl, order), System.Text.Encoding.UTF8, "application/json"))
             {
                 HttpContext.Response.Clear();
                 HttpContext.Response.WriteAsJsonAsync(result);
@@ -311,16 +320,50 @@ namespace NetCore_Assignemt.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        [Route("api/orders/nextstage/{id}")]
         public async Task<IActionResult> Cancel(long id)
         {
-            var order = await _context.Order.FirstOrDefaultAsync(c => c.Id == id);
+            string userId = getUserId();
+            if (userId == null) return Unauthorized();
 
-            return Redirect("/myorder");
+            var order = await _context.Order.Where(c => c.UserId == userId).FirstOrDefaultAsync(c => c.Id == id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            if (order.Status != (int)OrderStatus.Canceled)
+            {
+                order.Status = (int)OrderStatus.Canceled;
+                _context.SaveChanges();
+            }
+            return Redirect("/orders");
         }
 
-        public Task<IActionResult> NextStage(long id)
+        [HttpPost]
+        [Authorize(Roles = "Admin,Mod")]
+        [Route("api/orders/nextstage/{id}")]
+        public async Task<IActionResult> NextStage(long id)
         {
-            throw new NotImplementedException();
+            string userId = getUserId();
+            if (userId == null) return Unauthorized();
+
+            var order = await _context.Order.Where(c => c.UserId == userId).FirstOrDefaultAsync(c => c.Id == id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            if (order.Status <= (int)OrderStatus.Canceled)
+            {
+                return Ok(new { Message = "Order already cancelled." });
+            }
+            if (order.Status <= (int)OrderStatus.Completed && order.Status >= (int)OrderStatus.Pending)
+            {
+                order.Status += 1;
+                return Ok(new { Message = "Changed." });
+            }
+            _context.SaveChanges();
+            return NotFound();
         }
     }
 }

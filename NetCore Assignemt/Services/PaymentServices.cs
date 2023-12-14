@@ -6,12 +6,42 @@ using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
 using NetCore_Assignemt.Services.DTO;
 using sib_api_v3_sdk.Client;
+using System.Collections.ObjectModel;
 using System.Configuration;
 
 namespace NetCore_Assignemt.Services
 {
     public class PaymentServices : IPaymentServices
     {
+        public static readonly Dictionary<string, string> RETURN_RESPONSE_DICTIONARY = new Dictionary<string, string>
+        {
+            { "00", "Transaction successful" },
+            { "07", "Debit successful. Transaction suspected of fraud (related to fraud, suspicious transaction)." },
+            { "09", "Transaction unsuccessful due to: Customer's card/account not registered for Internet Banking service at the bank." },
+            { "10", "Transaction unsuccessful due to: Customer failed to authenticate card/account information more than 3 times." },
+            { "11", "Transaction unsuccessful due to: Payment waiting period has expired. Please retry the transaction." },
+            { "12", "Transaction unsuccessful due to: Customer's card/account is locked." },
+            { "13", "Transaction unsuccessful due to: Incorrect transaction authentication password (OTP) entered by the customer. Please retry the transaction." },
+            { "24", "Transaction unsuccessful due to: Customer canceled the transaction." },
+            { "51", "Transaction unsuccessful due to: Insufficient funds in the customer's account to complete the transaction." },
+            { "65", "Transaction unsuccessful due to: Customer's account has exceeded the daily transaction limit." },
+            { "75", "Payment bank is under maintenance." },
+            { "79", "Transaction unsuccessful due to: Customer entered the payment password incorrectly too many times. Please retry the transaction." },
+            { "99", "Other errors (remaining errors not listed in the provided error code list)." },
+        };
+
+        public static readonly Dictionary<string, string> RETURN_TRANSACTION_DICTIONARY = new Dictionary<string, string>
+        {
+            { "00", "Transaction successful" },
+            { "01", "Transaction incomplete" },
+            { "02", "Transaction failed" },
+            { "04", "Reversed transaction (Customer was debited by the bank, but the transaction was unsuccessful at VNPAY)" },
+            { "05", "VNPAY is processing this transaction (Refund in progress)" },
+            { "06", "VNPAY has sent a refund request to the bank (Refund in progress)" },
+            { "07", "Transaction suspected of fraud" },
+            { "09", "Refund rejected" },
+        };
+
         private readonly ILogger<PaymentServices> _logger;
 
         public PaymentServices(AppDbContext context, ILogger<PaymentServices> logger)
@@ -82,7 +112,7 @@ namespace NetCore_Assignemt.Services
             }
         }
 
-        public string InstantPaymentNotification(VnPayCallbackDTO callback, string raw)
+        public string InstantPaymentNotification(VnPayCallbackDTO callback, string raw, Order order)
         {
             string returnContent = string.Empty;
             if (raw.Length > 0)
@@ -90,57 +120,28 @@ namespace NetCore_Assignemt.Services
                 bool checkSignature = CallBackValidate(callback, raw);
                 if (checkSignature)
                 {
-                    //    //Cap nhat ket qua GD
-                    //    //Yeu cau: Truy van vao CSDL cua  Merchant => lay ra duoc OrderInfo
-                    //    //Giả sử OrderInfo lấy ra được như giả lập bên dưới
-                    //    _context.Order.FirstOrDefault()
-                    //    order.OrderId = orderId;
-                    //    order.Amount = 100000;
-                    //    order.PaymentTranId = vnpayTranId;
-                    //    order.Status = "0"; //0: Cho thanh toan,1: da thanh toan,2: GD loi
-                    //    //Kiem tra tinh trang Order
-                    //    if (order != null)
-                    //    {
-                    //        if (order.Amount == vnp_Amount)
-                    //        {
-                    //            if (order.Status == "0")
-                    //            {
-                    //                if (vnp_ResponseCode == "00" && vnp_TransactionStatus == "00")
-                    //                {
-                    //                    //Thanh toan thanh cong
-                    //                    log.InfoFormat("Thanh toan thanh cong, OrderId={0}, VNPAY TranId={1}", orderId,
-                    //                        vnpayTranId);
-                    //                    order.Status = "1";
-                    //                }
-                    //                else
-                    //                {
-                    //                    //Thanh toan khong thanh cong. Ma loi: vnp_ResponseCode
-                    //                    //  displayMsg.InnerText = "Có lỗi xảy ra trong quá trình xử lý.Mã lỗi: " + vnp_ResponseCode;
-                    //                    log.InfoFormat("Thanh toan loi, OrderId={0}, VNPAY TranId={1},ResponseCode={2}",
-                    //                        orderId,
-                    //                        vnpayTranId, vnp_ResponseCode);
-                    //                    order.Status = "2";
-                    //                }
-
-                    //                //Thêm code Thực hiện cập nhật vào Database 
-                    //                //Update Database
-
-                    returnContent = "{\"RspCode\":\"00\",\"Message\":\"Confirm Success\"}";
-                    //            }
-                    //            else
-                    //            {
-                    //                returnContent = "{\"RspCode\":\"02\",\"Message\":\"Order already confirmed\"}";
-                    //            }
-                    //        }
-                    //        else
-                    //        {
-                    //            returnContent = "{\"RspCode\":\"04\",\"Message\":\"invalid amount\"}";
-                    //        }
-                    //    }
-                    //    else
-                    //    {
-                    //        returnContent = "{\"RspCode\":\"01\",\"Message\":\"Order not found\"}";
-                    //    }
+                    if (order != null)
+                    {
+                        if (order.Total == callback.vnp_Amount)
+                        {
+                            if (order.Status == (int)OrderStatus.Pending)
+                            {
+                                returnContent = "{\"RspCode\":\"00\",\"Message\":\"Confirm Success\"}";
+                            }
+                            else
+                            {
+                                returnContent = "{\"RspCode\":\"02\",\"Message\":\"Order already confirmed\"}";
+                            }
+                        }
+                        else
+                        {
+                            returnContent = "{\"RspCode\":\"04\",\"Message\":\"invalid amount\"}";
+                        }
+                    }
+                    else
+                    {
+                        returnContent = "{\"RspCode\":\"01\",\"Message\":\"Order not found\"}";
+                    }
                 }
                 else
                 {
