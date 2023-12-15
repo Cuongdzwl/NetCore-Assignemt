@@ -31,7 +31,7 @@ namespace NetCore_Assignemt.Models
         [Range(0,9999)]
         public int Quantity { get; set; }
 
-        public DateTime? CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; } = DateTime.UtcNow;
         public int AuthorId { get; set; }
         public virtual ICollection<BookAuthor>? BookAuthors { get; set; }
         public int? CategoryId { get; set; }
