@@ -5,10 +5,13 @@ namespace NetCore_Assignemt.Models
 {
     public class Category
     {
-        public int Id { get; set; }
+        [Key] 
+        public int CategoryId { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         public DateTime? CreatedDate { get; set; }
+
+        public virtual ICollection<BookCategory>? BookCategories { get; set; }
     }
 }

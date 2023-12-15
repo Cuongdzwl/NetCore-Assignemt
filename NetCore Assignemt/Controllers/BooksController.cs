@@ -11,6 +11,7 @@ using NetCore_Assignemt.Models;
 
 namespace NetCore_Assignemt.Controllers
 {
+    [Authorize(Roles = "Mod, Admin")]
     public class BooksController : Controller
     {
         private readonly AppDbContext _context;
@@ -20,7 +21,7 @@ namespace NetCore_Assignemt.Controllers
         {
             _context = context;
         }
-        [Authorize(Roles = "Mode")]
+        
         // GET: Books
         public async Task<IActionResult> Index()
         {
@@ -48,25 +49,47 @@ namespace NetCore_Assignemt.Controllers
         }
 
         // GET: Books/Create
-        public IActionResult Create()
+        public async Task<IActionResult> CreateAsync()
         {
+            var authors = await _context.Author.ToListAsync();
+            var categories = await _context.Category.ToListAsync();
+
+            ViewData["AuthorId"] = new SelectList(authors, "AuthorId", "Name");
+            ViewData["CategoryId"] = new SelectList(categories, "CategoryId", "Name");
+
+          
+
             return View();
         }
+ 
 
         // POST: Books/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BookId,Title,Publisher,ImagePath,Description,Price,Quantity,CreatedDate")] Book book)
+        public async Task<IActionResult> Create(Book book, BookCategory bookCategory, BookAuthor bookAuthor)
         {
+     
             if (ModelState.IsValid)
             {
-                book.CreatedDate = DateTime.UtcNow; // Use UtcNow to store the timestamp in UTC format
                 _context.Add(book);
                 await _context.SaveChangesAsync();
+                bookCategory.CategoryId = book.CategoryId;
+                bookCategory.BookId = book.BookId;
+                _context.Add(bookCategory);
+                bookAuthor.BookId = book.BookId;
+                bookAuthor.AuthorId = book.AuthorId;
+                _context.Add(bookAuthor);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
+
+            
+            
+
+
             return View(book);
         }
 
@@ -83,6 +106,11 @@ namespace NetCore_Assignemt.Controllers
             {
                 return NotFound();
             }
+            var authors = await _context.Author.ToListAsync();
+            var categories = await _context.Category.ToListAsync();
+
+            ViewData["AuthorId"] = new SelectList(authors, "AuthorId", "Name");
+            ViewData["CategoryId"] = new SelectList(categories, "CategoryId", "Name");
             return View(book);
         }
 
@@ -91,7 +119,7 @@ namespace NetCore_Assignemt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BookId,Title,Publisher,ImagePath,Description,Price,Quantity,CreatedDate")] Book book)
+        public async Task<IActionResult> Edit(int id, Book book, BookCategory bookCategory, BookAuthor bookAuthor)
         {
             if (id != book.BookId)
             {
@@ -103,6 +131,22 @@ namespace NetCore_Assignemt.Controllers
                 try
                 {
                     _context.Update(book);
+                    await _context.SaveChangesAsync();
+                    var existingCategories = await _context.BookCategory.Where(bc => bc.BookId == book.BookId).ToListAsync();
+                    _context.BookCategory.RemoveRange(existingCategories);
+                    if (bookCategory.CategoryId != 0) 
+                    {
+                        var newBookCategory = new BookCategory { BookId = book.BookId, CategoryId = bookCategory.CategoryId };
+                        _context.BookCategory.Add(newBookCategory);
+                    }
+                    var existingAuthors = await _context.BookAuthor.Where(ba => ba.BookId == book.BookId).ToListAsync();
+                    _context.BookAuthor.RemoveRange(existingAuthors);
+
+                    if (bookAuthor.AuthorId != 0) 
+                    {
+                        var newBookAuthor = new BookAuthor { BookId = book.BookId, AuthorId = bookAuthor.AuthorId };
+                        _context.BookAuthor.Add(newBookAuthor);
+                    }
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -151,6 +195,11 @@ namespace NetCore_Assignemt.Controllers
             var book = await _context.Book.FindAsync(id);
             if (book != null)
             {
+                var existingCategories = await _context.BookCategory.Where(bc => bc.BookId == book.BookId).ToListAsync();
+                _context.BookCategory.RemoveRange(existingCategories);
+                var existingAuthors = await _context.BookAuthor.Where(ba => ba.BookId == book.BookId).ToListAsync();
+                _context.BookAuthor.RemoveRange(existingAuthors);
+                await _context.SaveChangesAsync();
                 _context.Book.Remove(book);
             }
             

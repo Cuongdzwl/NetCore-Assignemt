@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetCore_Assignemt.Data;
 
@@ -11,9 +12,11 @@ using NetCore_Assignemt.Data;
 namespace NetCore_Assignemt.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231215132704_Data")]
+    partial class Data
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -494,14 +497,12 @@ namespace NetCore_Assignemt.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("BankCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PayStatus")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long?>("PaymentTranId")
@@ -513,17 +514,12 @@ namespace NetCore_Assignemt.Migrations
                     b.Property<double>("Total")
                         .HasColumnType("float");
 
-                    b.Property<long?>("TransactionId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TransactionId");
 
                     b.HasIndex("UserId");
 
@@ -557,46 +553,6 @@ namespace NetCore_Assignemt.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("OrderDetail");
-                });
-
-            modelBuilder.Entity("NetCore_Assignemt.Models.Transaction", b =>
-                {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("vnp_Amount")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("vnp_BankCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("vnp_BankTranNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("vnp_CardType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("vnp_OrderInfo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("vnp_PayDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("vnp_ResponseCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("vnp_TransactionNo")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("vnp_TransactionStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Transaction");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -705,17 +661,11 @@ namespace NetCore_Assignemt.Migrations
 
             modelBuilder.Entity("NetCore_Assignemt.Models.Order", b =>
                 {
-                    b.HasOne("NetCore_Assignemt.Models.Transaction", "Transaction")
-                        .WithMany()
-                        .HasForeignKey("TransactionId");
-
                     b.HasOne("NetCore_Assignemt.Areas.Identity.Data.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Transaction");
 
                     b.Navigation("User");
                 });

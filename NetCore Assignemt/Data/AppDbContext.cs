@@ -14,6 +14,7 @@ namespace NetCore_Assignemt.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             base.OnModelCreating(modelBuilder);
 
             SeedRoles(modelBuilder);
@@ -69,7 +70,7 @@ namespace NetCore_Assignemt.Data
 
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(
                 new IdentityUserRole<string> { UserId = "1", RoleId = "1" }, // User role
-                new IdentityUserRole<string> { UserId = "2", RoleId = "2" }, // Mode role
+                new IdentityUserRole<string> { UserId = "2", RoleId = "2" }, // Mod role
                 new IdentityUserRole<string> { UserId = "3", RoleId = "3" }  // Admin role
             );
         }
