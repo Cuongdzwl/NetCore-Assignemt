@@ -83,7 +83,9 @@ namespace NetCore_Assignemt.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    AuthorId = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -94,14 +96,14 @@ namespace NetCore_Assignemt.Migrations
                 name: "Category",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.Id);
+                    table.PrimaryKey("PK_Category", x => x.CategoryId);
                 });
 
             migrationBuilder.CreateTable(
@@ -218,7 +220,7 @@ namespace NetCore_Assignemt.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
                     Total = table.Column<double>(type: "float", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PaymentTranId = table.Column<long>(type: "bigint", nullable: true),
                     BankCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PayStatus = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -293,8 +295,8 @@ namespace NetCore_Assignemt.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BookId = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                    BookId = table.Column<int>(type: "int", nullable: true),
+                    CategoryId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -303,14 +305,12 @@ namespace NetCore_Assignemt.Migrations
                         name: "FK_BookCategory_Book_BookId",
                         column: x => x.BookId,
                         principalTable: "Book",
-                        principalColumn: "BookId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "BookId");
                     table.ForeignKey(
                         name: "FK_BookCategory_Category_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Category",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CategoryId");
                 });
 
             migrationBuilder.CreateTable(
@@ -347,7 +347,7 @@ namespace NetCore_Assignemt.Migrations
                 values: new object[,]
                 {
                     { "1", null, "User", "USER" },
-                    { "2", null, "Mode", "MODE" },
+                    { "2", null, "Mod", "MOD" },
                     { "3", null, "Admin", "ADMIN" }
                 });
 
@@ -356,9 +356,9 @@ namespace NetCore_Assignemt.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "Address", "City", "ConcurrencyStamp", "DOB", "District", "Email", "EmailConfirmed", "Gender", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "1", 0, null, null, "9661dbdd-ccf2-417c-800e-35e404465945", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "test1@gmail.com", true, null, false, null, "TEST1@GMAIL.COM", "TEST1@GMAIL.COM", "AQAAAAIAAYagAAAAEGsCuSpUPkWOjRZyRDqpVMB5hpzk/9DHt1O3oxzfYeQo9R5wlFdKvHr6jDBAKiTFgg==", null, false, "", false, "test1@gmail.com" },
-                    { "2", 0, null, null, "3253860f-03b8-4882-823e-3f3b43e87a97", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "mode@gmail.com", true, null, false, null, "MODE@GMAIL.COM", "MODE@GMAIL.COM", "AQAAAAIAAYagAAAAEKRy+62fCj3iwroP66sil2ylZPlpMg2Ul/Gk6gPN6/v3ceaAanAGjHOX3I5EUPbx/g==", null, false, "", false, "mode@gmail.com" },
-                    { "3", 0, null, null, "237afdd2-1c11-44ed-9341-55ad9d249cc1", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "admin@gmail.com", true, null, false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEG0NIXsbmV1IgZzGYNMtxKTcnVgNiwfsLW8blu1wPJ1RX7xtWTtP9Asd98J6KxOP1Q==", null, false, "", false, "admin@gmail.com" }
+                    { "1", 0, null, null, "c7eeded2-5593-415e-adbd-65898ef6aa6c", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "test1@gmail.com", true, null, false, null, "TEST1@GMAIL.COM", "TEST1@GMAIL.COM", "AQAAAAIAAYagAAAAEBOAMofkVxZmo4ZtmIrnr03LTesnSuMN+6EtQgKa5euFIOnLZ8h5dge/F7fvxWfuyg==", null, false, "", false, "test1@gmail.com" },
+                    { "2", 0, null, null, "73f7b633-c8fd-4e4a-a31d-a4878e642a34", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "mode@gmail.com", true, null, false, null, "MODE@GMAIL.COM", "MODE@GMAIL.COM", "AQAAAAIAAYagAAAAEMQWQA7JuFR9BtrMgxb4nsysvug4wG3H0U6amjIjFKMzgW1nB59zsOy8XiCVy9TzMA==", null, false, "", false, "mode@gmail.com" },
+                    { "3", 0, null, null, "1a4d4528-2595-4c2a-bc55-a48c15e01b2e", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "admin@gmail.com", true, null, false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAELbESsYsL1WmZ5ejln4njhR1fGa3RWWQmITy1hMgA2A1pD6Pqx26xxX/rfxu0q6DSg==", null, false, "", false, "admin@gmail.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -423,7 +423,9 @@ namespace NetCore_Assignemt.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_BookCategory_BookId",
                 table: "BookCategory",
-                column: "BookId");
+                column: "BookId",
+                unique: true,
+                filter: "[BookId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookCategory_CategoryId",

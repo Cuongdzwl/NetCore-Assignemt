@@ -14,7 +14,7 @@ namespace NetCore_Assignemt.Models
         public int AuthorId { get; set; }
 
 
-        public virtual Book? Books { get; set; }
+        public Book? Books { get; set; }
 
         public virtual Author? Authors { get; set; }
     }

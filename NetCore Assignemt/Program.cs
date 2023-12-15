@@ -13,7 +13,7 @@ using sib_api_v3_sdk.Client;
 using System.Text.Json.Serialization;
 
 const string CLOUD_CONNECTION_STRING = "Azure";
-const string LOCAL_CONNECTION_STRING = "WebApp";
+const string LOCAL_CONNECTION_STRING = "DefaultConnection";
 // API Key
 
 // Google

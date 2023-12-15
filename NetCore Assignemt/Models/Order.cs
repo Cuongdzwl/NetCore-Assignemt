@@ -17,9 +17,8 @@ namespace NetCore_Assignemt.Models
         public double Total { get; set; }
 
         public int Status { get; set; }
-        [Timestamp]
-        public byte[]? CreatedDate { get; set; }
-            
+        public DateTime? CreatedDate { get; set; }
+
         public long? PaymentTranId { get; set; }
         public string? BankCode { get; set; }
         public string? PayStatus { get; set; }
