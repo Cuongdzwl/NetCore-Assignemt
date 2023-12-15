@@ -23,10 +23,6 @@ const string GOOGLE_CLIENT_ID = "1027305466602-6ta3futotkkv4646klci1r1bjj9agama.
 const string FACEBOOK_CLIENT_SECRET = "21bbfc0d23bb25d3ecd68f15f16f4c19";
 const string FACEBOOK_CLIENT_ID = "190652060774363";
 
-// VnPayQr
-
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,7 +52,12 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 
 
 // Identity
-builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddDefaultIdentity<User>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.SignIn.RequireConfirmedEmail = true;
+    options.User.RequireUniqueEmail = true;
+})
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
@@ -73,11 +74,12 @@ builder.Services.AddSession(options =>
     //options.IdleTimeout = TimeSpan.FromSeconds(5);
 });
 
-
 //Email
-// builder.Services.AddTransient<IEmailSender, EmailSender>();
-// builder.Services.Configure<AuthMessage>(builder.Configuration);
+ builder.Services.AddTransient<IEmailSender, EmailSender>();
 sib_api_v3_sdk.Client.Configuration.Default.AddApiKey("api-key", builder.Configuration["BrevoSMTP:api_key"]);
+
+//Payment
+builder.Services.AddScoped<IPaymentServices,PaymentServices>();
 
 builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 {
@@ -109,6 +111,8 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseForwardedHeaders();
+
 app.UseRouting();
 app.UseSession();
 

@@ -62,6 +62,7 @@ namespace NetCore_Assignemt.Controllers
         {
             if (ModelState.IsValid)
             {
+                book.CreatedDate = DateTime.UtcNow; // Use UtcNow to store the timestamp in UTC format
                 _context.Add(book);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

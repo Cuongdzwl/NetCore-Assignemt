@@ -60,6 +60,7 @@ namespace NetCore_Assignemt.Controllers
         {
             if (ModelState.IsValid)
             {
+                category.CreatedDate = DateTime.UtcNow; // Use UtcNow to store the timestamp in UTC format
                 _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -2,22 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
 using NetCore_Assignemt.Services;
+using NetCore_Assignemt.Services.DTO;
 
 namespace NetCore_Assignemt.Controllers
 {
-    public class OrdersController : Controller,IOrderServices
+    [Authorize]
+    public class OrdersController : Controller, IOrderServices
     {
         private readonly AppDbContext _context;
+        private readonly IPaymentServices _payment;
+        private ILogger<OrdersController> _logger;
 
-        public OrdersController(AppDbContext context)
+        public OrdersController(AppDbContext context, IPaymentServices paymentServices, ILogger<OrdersController> logger)
         {
             _context = context;
+            _payment = paymentServices;
+            _logger = logger;
         }
 
         // GET: Orders
@@ -162,27 +170,64 @@ namespace NetCore_Assignemt.Controllers
             {
                 _context.Order.Remove(order);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool OrderExists(long id)
         {
-          return (_context.Order?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Order?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        public Task<IActionResult> PayAsync(int orderid)
+        public async Task<IActionResult> Pay(long id)
+        {
+            bool flag;
+            // Find Order
+            var order = await _context.Order.FirstOrDefaultAsync(c => c.Id == id);
+            if (order == null) return NotFound();
+
+            // Get Ip address
+            string ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+
+            if (string.IsNullOrEmpty(ipAddress))
+            {
+                ipAddress = HttpContext.Request.Headers["X-Forwarded-For"];
+            }
+            else if (string.IsNullOrEmpty(ipAddress))
+            {
+                return BadRequest();
+            }
+            // Generate URL
+            string url = _payment.Pay(order, null, ipAddress, out flag);
+            // Check  if URL build Success
+            if (!flag) return BadRequest();
+
+            return Redirect(url);
+        }
+        [HttpGet]
+        public IActionResult Return([FromQuery]VnPayCallbackDTO callback)
+        {
+            string rawUrl = HttpContext.Request.QueryString + "";
+
+            _logger.LogInformation(rawUrl.ToString());   
+
+            if (_payment.CallBackValidate(callback,rawUrl))
+            {
+                return View("Return", callback);
+            }
+
+            return Redirect("/orders");
+        }
+
+        public Task<IActionResult> Cancel(long id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IActionResult> CancelAsync(int orderid)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<IActionResult> NextStage(int orderid)
+
+        public Task<IActionResult> NextStage(long id)
         {
             throw new NotImplementedException();
         }

@@ -12,8 +12,8 @@ using NetCore_Assignemt.Data;
 namespace NetCore_Assignemt.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231211074720_Data")]
-    partial class Data
+    [Migration("20231212182451_finale1")]
+    partial class finale1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,8 +61,8 @@ namespace NetCore_Assignemt.Migrations
                         new
                         {
                             Id = "2",
-                            Name = "Mode",
-                            NormalizedName = "MODE"
+                            Name = "Mod",
+                            NormalizedName = "MOD"
                         },
                         new
                         {
@@ -283,14 +283,14 @@ namespace NetCore_Assignemt.Migrations
                         {
                             Id = "3",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "155a81b8-74a9-446f-a7a2-d53dadd08cfb",
+                            ConcurrencyStamp = "82a5339a-bc5e-4448-aaf4-d7855beda93a",
                             DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFQMIhaj6Qu+9petNi4V7rNe0q7b7bsYz6tMy9sPZzFEjQpHhKFqgAAie9AitVxe7A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELNRKteQnGJDpzr1PFCHhtJIeMNtpw+NizBOPlctVxowpCNYPSBswmr6Lf9TA1iqzw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -300,14 +300,14 @@ namespace NetCore_Assignemt.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d30fd051-2d62-4681-bae3-c9c0b3a40ccb",
+                            ConcurrencyStamp = "94be1521-7152-453c-abf3-3f97212720e2",
                             DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "mode@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "MODE@GMAIL.COM",
                             NormalizedUserName = "MODE@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEM3lBEzCzcZPFU+/pMVdTGCkVOxnTdhKgqNBHp8loFHfBQJ3/NZJH5TLhQd74/yIhA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEM6LndPjpeoMQ+v/Fae0TnOeVZF3X/Qu5rnEOBqcyjaHTardq8Qocos29A/zrHbE3g==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -317,14 +317,14 @@ namespace NetCore_Assignemt.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "34368565-c22e-44fa-897a-e3c2f06fb607",
+                            ConcurrencyStamp = "e5803474-7743-4bdf-a179-9ef6e5cd23f7",
                             DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "test1@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "TEST1@GMAIL.COM",
                             NormalizedUserName = "TEST1@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEA9yMD150ozE7+4Uk6MFpgkCAgEtxTfc+vcyvAjBK+F501yOfFY+W2rDjNOQ1yPgWQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBzWtqI1Z76OWwM54ZntJ6crcUKRDTN1Jy/ooenE61b9YMD/c3YyAYWc13NpGOz38w==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -362,8 +362,6 @@ namespace NetCore_Assignemt.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookId"));
 
                     b.Property<DateTime?>("CreatedDate")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -474,11 +472,8 @@ namespace NetCore_Assignemt.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<byte[]>("CreatedDate")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -497,10 +492,8 @@ namespace NetCore_Assignemt.Migrations
                     b.Property<string>("BankCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("CreatedDate")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PayStatus")
                         .HasColumnType("nvarchar(max)");

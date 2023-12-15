@@ -9,7 +9,6 @@ namespace NetCore_Assignemt.Models
 
         public string Name { get; set; }
 
-        [Timestamp]
-        public byte[] CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
     }
 }
