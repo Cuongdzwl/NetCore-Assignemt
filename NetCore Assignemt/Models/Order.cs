@@ -17,13 +17,16 @@ namespace NetCore_Assignemt.Models
         public double Total { get; set; }
 
         public int Status { get; set; }
-        public DateTime? CreatedDate { get; set; }
+      
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
         public long? PaymentTranId { get; set; }
-        public string? BankCode { get; set; }
-        public string? PayStatus { get; set; }
+
+        public string BankCode { get; set; } = string.Empty;
+        public string PayStatus { get; set; } = string.Empty;
 
         public virtual ICollection<OrderDetail>? OrderDetail { get; set; }
         public virtual User? User { get; set; }
+        public virtual Transaction? Transaction { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetCore_Assignemt.Data;
 
@@ -11,9 +12,11 @@ using NetCore_Assignemt.Data;
 namespace NetCore_Assignemt.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231214125448_Finale")]
+    partial class Finale
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -280,14 +283,14 @@ namespace NetCore_Assignemt.Migrations
                         {
                             Id = "3",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1a4d4528-2595-4c2a-bc55-a48c15e01b2e",
+                            ConcurrencyStamp = "b6866a6c-16b7-4991-9cbc-06349583236c",
                             DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELbESsYsL1WmZ5ejln4njhR1fGa3RWWQmITy1hMgA2A1pD6Pqx26xxX/rfxu0q6DSg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKsmmChnG24z5pHZCY0wldUwBFjGsUwp7zr69U0JgDoBqcEcBqppE9TCUW98s22Fiw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -297,14 +300,14 @@ namespace NetCore_Assignemt.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "73f7b633-c8fd-4e4a-a31d-a4878e642a34",
+                            ConcurrencyStamp = "382205c4-7a9f-4e62-a018-89bd8bda1f54",
                             DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "mode@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "MODE@GMAIL.COM",
                             NormalizedUserName = "MODE@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMQWQA7JuFR9BtrMgxb4nsysvug4wG3H0U6amjIjFKMzgW1nB59zsOy8XiCVy9TzMA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEG3CeWJikNPiy2QIYFoTVtthjq7CXZnQWQRrucOBoK5Ep5q5PhMzdasN840JeCExNg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -314,14 +317,14 @@ namespace NetCore_Assignemt.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c7eeded2-5593-415e-adbd-65898ef6aa6c",
+                            ConcurrencyStamp = "29c85fbe-46a6-477d-8990-9f1cbcabfdff",
                             DOB = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "test1@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "TEST1@GMAIL.COM",
                             NormalizedUserName = "TEST1@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBOAMofkVxZmo4ZtmIrnr03LTesnSuMN+6EtQgKa5euFIOnLZ8h5dge/F7fvxWfuyg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEN8U3NFwLn4u5B6nnvEyyfP0DGvc+Y98umHOR4WNVXXb7Q/HthH3mzjbKnSZNN5XYg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -357,12 +360,6 @@ namespace NetCore_Assignemt.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookId"));
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -425,17 +422,15 @@ namespace NetCore_Assignemt.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BookId")
+                    b.Property<int>("BookId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookId")
-                        .IsUnique()
-                        .HasFilter("[BookId] IS NOT NULL");
+                    b.HasIndex("BookId");
 
                     b.HasIndex("CategoryId");
 
@@ -471,19 +466,20 @@ namespace NetCore_Assignemt.Migrations
 
             modelBuilder.Entity("NetCore_Assignemt.Models.Category", b =>
                 {
-                    b.Property<int>("CategoryId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("CategoryId");
+                    b.HasKey("Id");
 
                     b.ToTable("Category");
                 });
@@ -497,7 +493,7 @@ namespace NetCore_Assignemt.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("CreatedDate")
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PayStatus")
@@ -568,12 +564,15 @@ namespace NetCore_Assignemt.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("vnp_BankCode")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("vnp_BankTranNo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("vnp_CardType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("vnp_OrderInfo")
@@ -672,12 +671,16 @@ namespace NetCore_Assignemt.Migrations
             modelBuilder.Entity("NetCore_Assignemt.Models.BookCategory", b =>
                 {
                     b.HasOne("NetCore_Assignemt.Models.Book", "Books")
-                        .WithOne("BookCategories")
-                        .HasForeignKey("NetCore_Assignemt.Models.BookCategory", "BookId");
+                        .WithMany("BookCategories")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("NetCore_Assignemt.Models.Category", "Categories")
-                        .WithMany("BookCategories")
-                        .HasForeignKey("CategoryId");
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Books");
 
@@ -753,11 +756,6 @@ namespace NetCore_Assignemt.Migrations
                 {
                     b.Navigation("BookAuthors");
 
-                    b.Navigation("BookCategories");
-                });
-
-            modelBuilder.Entity("NetCore_Assignemt.Models.Category", b =>
-                {
                     b.Navigation("BookCategories");
                 });
 

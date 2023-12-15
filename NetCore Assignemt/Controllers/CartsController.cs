@@ -7,8 +7,11 @@ using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NetCore_Assignemt.Areas.Identity.Data;
 using NetCore_Assignemt.Common;
 using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
@@ -24,16 +27,19 @@ namespace NetCore_Assignemt.Controllers
     public class CartsController : ControllerBase, ICartServices
     {
         private readonly AppDbContext _context;
+        private readonly IEmailSender _sender;
 
-        public CartsController(AppDbContext context)
+        public CartsController(AppDbContext context, IEmailSender sender)
         {
             _context = context;
+            _sender = sender;
         }
 
         private string? getUserId()
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
+
         // GET: api/Carts/?size=5&getall=false
         [HttpGet]
         public async Task<ActionResult<Cart>> Get([FromQuery] int? size)
@@ -142,8 +148,8 @@ namespace NetCore_Assignemt.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckOut()
         {
-            //try
-            //{
+            try
+            {
                 var userId = getUserId();
                 if (userId == null)
                 {
@@ -152,6 +158,7 @@ namespace NetCore_Assignemt.Controllers
 
             var userInfo = _context.Users.Where(c => c.Id == userId).FirstOrDefault();
 
+            if (userInfo == null) return NotFound("Some thing went wrong!");
             if (userInfo.Address  == null || userInfo.Address.Length == 0) { return NotFound(new { message = "You need to provide your detailed Address before checking out!"}); }
             if (userInfo.City == null || userInfo.City.Length == 0) { return NotFound(new { message = "You need to provide your City before checking out!" }); }
             if (userInfo.District == null || userInfo.District.Length == 0) { return NotFound(new { message = "You need to provide your District before checking out!" }); }
@@ -198,13 +205,15 @@ namespace NetCore_Assignemt.Controllers
 
                 // Save changes to the database
                 await _context.SaveChangesAsync();
+                string htmlContent = "Your Order ID." + orderId + " has been placed.";
 
-                return Ok(new { message = "Check Out Successfully!"});
-            //}
-            //catch (Exception e)
-            //{
-            //    return BadRequest();
-            //}
+                await _sender.SendEmailAsync(userInfo.Email, "Order Placed on FPT Book",htmlContent);
+                return Ok(new { message = "Checked Out Successfully!"});
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
         }
         // Patch: api/Carts/edit/
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
