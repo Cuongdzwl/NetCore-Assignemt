@@ -11,6 +11,7 @@ using NetCore_Assignemt.Models;
 
 namespace NetCore_Assignemt.Controllers
 {
+    [Authorize(Roles = "Mod, Admin")]
     public class BooksController : Controller
     {
         private readonly AppDbContext _context;
@@ -20,7 +21,7 @@ namespace NetCore_Assignemt.Controllers
         {
             _context = context;
         }
-        [Authorize(Roles = "Mod")]
+        
         // GET: Books
         public async Task<IActionResult> Index()
         {

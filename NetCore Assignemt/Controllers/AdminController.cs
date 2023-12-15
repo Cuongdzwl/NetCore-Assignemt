@@ -8,6 +8,7 @@ using NetCore_Assignemt.Models;
 
 namespace NetCore_Assignemt.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly AppDbContext _context;
