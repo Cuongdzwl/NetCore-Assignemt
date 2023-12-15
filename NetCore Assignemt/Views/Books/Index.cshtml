@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<NetCore_Assignemt.Models.Book>
 
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -13,25 +14,31 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                Title
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Publisher)
+                Publisher
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ImagePath)
+                Image   
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                Description
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                Price
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Quantity)
+                Quantity
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
+                CreatedDate
+            </th>
+            <th>
+                Author
+            </th>
+            <th>
+                Category
             </th>
             <th></th>
         </tr>
@@ -46,7 +53,7 @@
                 @Html.DisplayFor(modelItem => item.Publisher)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImagePath)
+                    <img src="/images/@item.ImagePath" class="img-responsive" width="200" height="200" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
@@ -59,6 +66,12 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AuthorId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryId)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |
