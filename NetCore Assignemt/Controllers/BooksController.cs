@@ -25,9 +25,8 @@ namespace NetCore_Assignemt.Controllers
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            return _context.Book != null ? 
-                          View(await _context.Book.ToListAsync()) :
-                          Problem("Entity set 'AppDbContext.Book'  is null.");
+            var book = await _context.Book.Include(b => b.Author).Include(b => b.Category).ToListAsync();
+            return View(book);
         }
 
         // GET: Books/Details/5
