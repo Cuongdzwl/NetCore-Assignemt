@@ -81,7 +81,7 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 sib_api_v3_sdk.Client.Configuration.Default.AddApiKey("api-key", builder.Configuration["BrevoSMTP:api_key"]);
 
 //Payment
-builder.Services.AddScoped<IPaymentServices,PaymentServices>();
+builder.Services.AddScoped<IVnPayServices,VnPayServices>();
 
 builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 {

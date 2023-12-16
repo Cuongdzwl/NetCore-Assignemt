@@ -11,7 +11,7 @@ using System.Configuration;
 
 namespace NetCore_Assignemt.Services
 {
-    public class PaymentServices : IPaymentServices
+    public class VnPayServices : IVnPayServices
     {
         public static readonly Dictionary<string, string> RETURN_RESPONSE_DICTIONARY = new Dictionary<string, string>
         {
@@ -42,9 +42,9 @@ namespace NetCore_Assignemt.Services
             { "09", "Refund rejected" },
         };
 
-        private readonly ILogger<PaymentServices> _logger;
+        private readonly ILogger<VnPayServices> _logger;
 
-        public PaymentServices(AppDbContext context, ILogger<PaymentServices> logger)
+        public VnPayServices(AppDbContext context, ILogger<VnPayServices> logger)
         {
             _logger = logger;
         }

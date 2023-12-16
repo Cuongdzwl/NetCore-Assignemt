@@ -22,10 +22,10 @@ namespace NetCore_Assignemt.Controllers
     public class OrdersController : Controller, IOrderServices
     {
         private readonly AppDbContext _context;
-        private readonly IPaymentServices _payment;
+        private readonly IVnPayServices _payment;
         private ILogger<OrdersController> _logger;
 
-        public OrdersController(AppDbContext context, IPaymentServices paymentServices, ILogger<OrdersController> logger)
+        public OrdersController(AppDbContext context, IVnPayServices paymentServices, ILogger<OrdersController> logger)
         {
             _context = context;
             _payment = paymentServices;
@@ -239,7 +239,7 @@ namespace NetCore_Assignemt.Controllers
             });
 
             // Check Responsecode
-            PaymentServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
+            VnPayServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
 
             if (message == null) message = "Unknown Error!";
             // Update Inventory

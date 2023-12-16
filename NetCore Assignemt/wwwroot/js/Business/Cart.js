@@ -35,12 +35,12 @@ function addToCart(bookId, quantity) {
         }
     });
 }
-function editCart(bookId, quatity) {
+function editCart(bookId) {
 
     delayInMilliseconds = 2000 // 2sec
 
     setTimeout(function () {
-        editCartNonDelay(bookId, quatity);
+        editCartNonDelay(bookId);
     }, delayInMilliseconds);
 }
 
@@ -56,7 +56,6 @@ function editCartNonDelay(bookId) {
         contentType: 'application/json',
         success: function (response) {
             console.log('Item Updated:', response);
-
         },
         error: function (error) {
             console.error('Error adding item to cart:', error);

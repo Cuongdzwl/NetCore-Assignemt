@@ -9,6 +9,7 @@ using System.Drawing;
 
 namespace NetCore_Assignemt.Controllers
 {
+    [Authorize]
     public class CartController : Controller
     {
         private readonly AppDbContext _context;
@@ -23,7 +24,6 @@ namespace NetCore_Assignemt.Controllers
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
-
 
         private async Task<List<CartDTO>?> getCart()
         {
