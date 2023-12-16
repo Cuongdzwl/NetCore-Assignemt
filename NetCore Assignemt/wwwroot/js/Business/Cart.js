@@ -3,11 +3,12 @@
 function getURL() {
     return window.location.href;
 }
-function redirectToLogin(returnUrl) {
-
+function redirectToLogin() {
+    window.location.href = '/Identity/Account/Login';
 }
 
 function addToCart(bookId, quantity) {
+
     let url = `/api/carts/AddToCart/${bookId}/${quantity}`;
     // Use for Redirect to LoginPage
     let returnURL = getURL();
@@ -17,12 +18,20 @@ function addToCart(bookId, quantity) {
         contentType: 'application/json',
         success: function (response) {
             console.log('Item added to cart:', response);
+            // Change classes
+            var button = $(this);
+
+            button.removeClass('btn-primary').addClass('btn-success');
+            button.find('.addToCartIcon').removeClass('fa-cart-shopping').addClass('fa-check');
+
+            // Set a timeout to revert the changes after 1 second
+            setTimeout(function () {
+                button.removeClass('btn-success').addClass('btn-primary');
+                button.find('.addToCartIcon').removeClass('fa-check').addClass('fa-cart-shopping');
+            }, 1000);
         },
         error: function (error) {
-            console.error('Error adding item to cart:', error);
-            // If Unthorized Redirect to LoginPage
-
-            window.location.href = newPage;
+            redirectToLogin();
         }
     });
 }
@@ -35,8 +44,10 @@ function editCart(bookId, quatity) {
     }, delayInMilliseconds);
 }
 
-function editCartNonDelay(bookId, quantity) {
+function editCartNonDelay(bookId) {
     setTimeout()
+    var quantity = document.getElementById(`cart-item-${bookId}-quantity`);
+
     let url = `/api/carts/edit/${bookId}/${quantity}`;
 
     $.ajax({
@@ -46,12 +57,9 @@ function editCartNonDelay(bookId, quantity) {
         success: function (response) {
             console.log('Item Updated:', response);
 
-            // Handle success, maybe update UI, show a message, etc.
         },
         error: function (error) {
             console.error('Error adding item to cart:', error);
-
-            // Handle error, show an error message, etc.
         }
     });
 }
@@ -89,8 +97,7 @@ function deleteCartItem(bookId) {
         url: `/api/Carts/delete/${bookId}`,
         type: 'DELETE',
         success: function (data) {
-            // Handle success, e.g., show a message or update the UI
-            console.log(data.Message);
+            $(`#cart-item-${bookId}`).remove();
         },
         error: function (error) {
             // Handle errors, e.g., display an error message
@@ -118,6 +125,12 @@ function deleteAllCartItems() {
 
 }
 
+
+function isVnPaySelected() {
+    return $('#VnPay-1').is(':checked');
+}
+
+
 function checkOut() {
     alert("Are you Sure?. This action can not be undone!");
     $.ajax({
@@ -129,14 +142,23 @@ function checkOut() {
             // Add any additional headers if needed, such as authorization headers
         },
         success: function (data) {
-            // Handle the success response
-            console.log("Checkout successful:", data);
-            // Redirect to a success page or update UI accordingly
+            console.log(data);
+
+            $("#checkout").html("Done")
+            if (isVnPaySelected()) {
+
+            } else {
+                window.location.href = "/orders/return"
+            }
+
         },
         error: function (xhr, textStatus, errorThrown) {
             // Handle the error response
-            console.error("Checkout failed:", xhr.responseText);
-            // Display an error message or redirect to an error page
+            $("#checkout").html(xhr.Message)
+
+                setTimeout(function () {
+                    $('#checkout').html('Place Order');
+                }, 2000); // C
         }
     });
 }

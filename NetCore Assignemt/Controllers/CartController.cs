@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NetCore_Assignemt.Data;
-using NetCore_Assignemt.ViewModels;
-using NetCore_Assignemt.Helper;
 using Microsoft.AspNetCore.Authorization;
 using NetCore_Assignemt.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using NetCore_Assignemt.Services.DTO;
+using System.Drawing;
 
 namespace NetCore_Assignemt.Controllers
 {
@@ -17,64 +19,74 @@ namespace NetCore_Assignemt.Controllers
             _context = context;
         }
 
-        const string CART_KEY = "MYCART";
-        public List<CartItem> Cart => HttpContext.Session.Get<List<CartItem>>(CART_KEY) ?? new
-            List<CartItem>();
-        public IActionResult Index()
+        private string? getUserId()
         {
-            return View(Cart);
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
-        public IActionResult AddToCart(int Id, int quantity = 1)
+
+
+        private async Task<List<CartDTO>?> getCart()
         {
-            var _cart = Cart;
-            var item =_cart.SingleOrDefault(p => p.BookId == Id);
-            if (item == null)
-            {
-                var book = _context.Book.SingleOrDefault(p => p.BookId == Id);
-                //{
-                //    TempData["Message"] = $"not found{Id}";
-                //    return Redirect("/404");
-                //}
-                item = new CartItem 
-                {
-                    BookId = book.BookId,
-                    Title = book.Title,
-                    Price = book.Price,
-                    ImagePath = book.ImagePath ?? string.Empty,
-                    Quantity = book.Quantity
-                };
-                _cart.Add(item);
-            }
-            else
-            {
-                item.Quantity += quantity;
-            }
+            // Get the user's unique identifier from the ClaimsPrincipal
+            var userId = getUserId();
 
-            HttpContext.Session.Set(CART_KEY, _cart);
+            // Check if the user has a cart
+            var query = _context.Cart
+                .Where(c => c.UserId == userId)
+            .Include(c => c.Book);
 
-            return RedirectToAction("Index");
+            var cartItems = await query.ToListAsync();
+
+            var cartDto = cartItems
+                  .Where(c => c.Book != null) // Filter out items without a corresponding Book
+                  .Select(c => new CartDTO
+                  {
+                      BookId = c.BookId,
+                      Quantity = c.Quantity,
+                      SubTotal = c.Quantity * c.Book.Price,
+                      Book = new BookDTO
+                      {
+                          BookId = c.Book.BookId,
+                          Title = c.Book.Title,
+                          Description = c.Book.Description,
+                          Price = c.Book.Price,
+                          ImagePath = c.Book.ImagePath,
+                          Publisher = c.Book.Publisher
+                      }
+                  })
+                  .ToList();
+
+            return cartDto;
         }
-        public IActionResult RemoveCart(int id)
+
+        public async Task<IActionResult> Index()
         {
-            var _cart = Cart;
-            var item = _cart.SingleOrDefault(p => p.BookId == id);
-            if (item != null) 
-            {
-                _cart.Remove(item);
-                HttpContext.Session.Set(CART_KEY, _cart);
-            }
-            return RedirectToAction("Index");
+            return View(await getCart());
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult Checkout()
+        public async Task<IActionResult> Checkout()
         {
-            if(Cart.Count ==0)
+            var userId = getUserId();
+
+            var user = await _context.Users.FirstOrDefaultAsync(c => c.Id == userId);
+
+            var cart = await getCart();
+            if (cart == null)
             {
                 return Redirect("/");
             }
-            return View(Cart);
+
+            var bill = new BillDTO
+            {
+                Cart = cart,
+                Address = user.Address,
+                Name = user.UserName,
+                Email = user.Email,
+                Phone = user.PhoneNumber
+            };
+            return View(bill);
         }
 
     }

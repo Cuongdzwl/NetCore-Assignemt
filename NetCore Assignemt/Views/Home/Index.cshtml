@@ -6,7 +6,7 @@
 
 <!-- Example link to navigate to the role creation page -->
 <a asp-controller="Admin" asp-action="SetRoles" asp-route-userId="@UserManager.GetUserId(User)">Set Roles</a>
-  
+
 @* <div class="List-book">
     <button class="btn btn-success" id="checkoutButton" onclick="checkOut()">Check Out</button>
     @foreach (var item in ViewBag.Book)
@@ -45,15 +45,16 @@
                                 <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
                             </div>
                         </div>
-                    <div class="col-lg-9">
-                        <div class="row g-4 justify-content-center">
-                            @foreach (var item in ViewBag.Book)
-                            {
-                                <div class="col-md-6 col-lg-6 col-xl-4">
-                                    <div class="rounded position-relative">
-                                        <a asp-controller="Home" asp-action="Details" asp-route-id="@item.BookId">
+                        <div class="col-lg-9">
+                            <div class="row g-4 justify-content-center">
+                                @foreach (var item in ViewBag.Book)
+                                {
+                                    <div class="col-md-6 col-lg-6 col-xl-4">
+                                        <div class="rounded position-relative">
                                             <div class="fruite-img">
-                                                <img src="/images/@item.ImagePath" class="img-fluid w-100 rounded-top" alt="">
+                                                <a asp-controller="Home" asp-action="Details" asp-route-id="@item.BookId">
+                                                    <img src="/images/@item.ImagePath" class="img-fluid w-100 rounded-top" alt="">
+                                                </a>
                                             </div>
                                             <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Book</div>
                                             <div class="p-4 border border-secondary border-top-0 rounded-bottom">
@@ -61,18 +62,17 @@
                                                 <p>@item.Description</p>
                                                 <div class="d-flex justify-content-between flex-lg-wrap">
                                                     <p class="text-dark fs-5 fw-bold mb-0">$@item.Price</p>
-                                                    <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@item.BookId" class="btn btn-primary float-right"><i class="fa-solid fa-cart-shopping"></i></a>
+                                                    <button onclick="addToCart(@item.BookId,1)" class="btn btn-primary float-right addToCartButton"><i name="" class="fa-solid fa-cart-shopping addToCartIcon"></i></button>
                                                 </div>
                                             </div>
-                                        </a>
+                                        </div>
                                     </div>
-                                </div>
-                            }
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
