@@ -20,6 +20,11 @@ namespace NetCore_Assignemt.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
         }
+        public IActionResult Index()
+        {
+            var user= _userManager.Users;
+            return View(user);
+        }
 
         // GET: Admin/SetRoles
         public async Task<IActionResult> SetRoles(string userId)
