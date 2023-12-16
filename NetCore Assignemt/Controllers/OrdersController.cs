@@ -36,16 +36,15 @@ namespace NetCore_Assignemt.Controllers
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
         // GET: Orders
+        [Authorize(Roles = ("Admin,Mod"))]
         public async Task<IActionResult> Index()
         {
             var appDbContext = _context.Order.Include(o => o.User);
             return View(await appDbContext.ToListAsync());
         }
-
         public async Task<IActionResult> MyOrders()
         {
-
-            var appDbContext = _context.Order.Include(o => o.User);
+            var appDbContext = _context.Order.Where(c => c.UserId == getUserId());
             return View(await appDbContext.ToListAsync());
         }
 
@@ -68,120 +67,120 @@ namespace NetCore_Assignemt.Controllers
             return View(order);
         }
 
-        // GET: Orders/Create
-        public IActionResult Create()
-        {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
-        }
+        //// GET: Orders/Create
+        //public IActionResult Create()
+        //{
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+        //    return View();
+        //}
 
-        // POST: Orders/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] NetCore_Assignemt.Models.Order order)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(order);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
-            return View(order);
-        }
+        //// POST: Orders/Create
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] NetCore_Assignemt.Models.Order order)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.Add(order);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
+        //    return View(order);
+        //}
 
-        // GET: Orders/Edit/5
-        public async Task<IActionResult> Edit(long? id)
-        {
-            if (id == null || _context.Order == null)
-            {
-                return NotFound();
-            }
+        //// GET: Orders/Edit/5
+        //public async Task<IActionResult> Edit(long? id)
+        //{
+        //    if (id == null || _context.Order == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var order = await _context.Order.FindAsync(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
-            return View(order);
-        }
+        //    var order = await _context.Order.FindAsync(id);
+        //    if (order == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
+        //    return View(order);
+        //}
 
-        // POST: Orders/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] Models.Order order)
-        {
-            if (id != order.Id)
-            {
-                return NotFound();
-            }
+        //// POST: Orders/Edit/5
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(long id, [Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] Models.Order order)
+        //{
+        //    if (id != order.Id)
+        //    {
+        //        return NotFound();
+        //    }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!OrderExists(order.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
-            return View(order);
-        }
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(order);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!OrderExists(order.Id))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
+        //    return View(order);
+        //}
 
-        // GET: Orders/Delete/5
-        public async Task<IActionResult> Delete(long? id)
-        {
-            if (id == null || _context.Order == null)
-            {
-                return NotFound();
-            }
+        //// GET: Orders/Delete/5
+        //public async Task<IActionResult> Delete(long? id)
+        //{
+        //    if (id == null || _context.Order == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var order = await _context.Order
-                .Include(o => o.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (order == null)
-            {
-                return NotFound();
-            }
+        //    var order = await _context.Order
+        //        .Include(o => o.User)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (order == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(order);
-        }
+        //    return View(order);
+        //}
 
-        // POST: Orders/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(long id)
-        {
-            if (_context.Order == null)
-            {
-                return Problem("Entity set 'AppDbContext.Order'  is null.");
-            }
-            var order = await _context.Order.FindAsync(id);
-            if (order != null)
-            {
-                _context.Order.Remove(order);
-            }
+        //// POST: Orders/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(long id)
+        //{
+        //    if (_context.Order == null)
+        //    {
+        //        return Problem("Entity set 'AppDbContext.Order'  is null.");
+        //    }
+        //    var order = await _context.Order.FindAsync(id);
+        //    if (order != null)
+        //    {
+        //        _context.Order.Remove(order);
+        //    }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         private bool OrderExists(long id)
         {
@@ -279,6 +278,7 @@ namespace NetCore_Assignemt.Controllers
             return new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
         }
 
+        // Client to Server
         [HttpGet]
         public IActionResult Return([FromQuery] VnPayCallbackDTO callback)
         {
@@ -295,6 +295,7 @@ namespace NetCore_Assignemt.Controllers
             return View("Return", new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = "Invalid Transaction" });
         }
 
+        // Server to Server
         [HttpGet]
         [Route("/IPN")]
         public async Task<IActionResult> IPN([FromQuery] VnPayCallbackDTO callback)
