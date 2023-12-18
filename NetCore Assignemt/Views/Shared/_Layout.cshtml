@@ -69,13 +69,17 @@
                 </button>
                 <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        @if (User.IsInRole("Admin"))
+                        @if (User.IsInRole("Admin") || User.IsInRole("Mod"))
                         {
                             <a class="nav-item nav-link" asp-area="" asp-controller="Books" asp-action="Index">Book</a> 
                             <a class="nav-item nav-link" asp-area="" asp-controller="Categories" asp-action="Index">Category</a>
                             <a class="nav-item nav-link" asp-area="" asp-controller="Authors" asp-action="Index">Author</a>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
                             <a class="nav-item nav-link" asp-controller="Admin" asp-action="SetRoles" asp-route-userId="@UserManager.GetUserId(User)">Set Roles</a>
                         }
+                                
                         <a class="nav-item nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
 
 
