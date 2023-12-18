@@ -71,54 +71,49 @@
                     <div class="navbar-nav mx-auto">
                         @if (User.IsInRole("Admin") || User.IsInRole("Mod"))
                         {
-                            <a class="nav-item nav-link" asp-area="" asp-controller="Books" asp-action="Index">Book</a> 
-                            <a class="nav-item nav-link" asp-area="" asp-controller="Categories" asp-action="Index">Category</a>
-                            <a class="nav-item nav-link" asp-area="" asp-controller="Authors" asp-action="Index">Author</a>
-                        }
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a class="nav-item nav-link" asp-controller="Admin" asp-action="SetRoles" asp-route-userId="@UserManager.GetUserId(User)">Set Roles</a>
-                        }
-                                
-                        <a class="nav-item nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-
-
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                <a asp-controller="Cart" asp-action="Index" class="dropdown-item">Cart</a>
-                                <a asp-controller="Orders" asp-action="Index" class="dropdown-item">Order</a>
-                        </div>
-                    </div>
-                    <div class="d-flex m-3 me-0">
-                        <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
-                        <a href="#" class="position-relative me-4 my-auto">
-                            <i class="fa fa-shopping-bag fa-2x"></i>
-                            <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">3</span>
-                        </a>
-                        <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-user fa-2x"></i></a>
-                        <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                        @if (SignInManager.IsSignedIn(User))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-                            </li>
-                            <li class="nav-item">
-                                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                                    <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-                                </form>
-                                </li>
-                        }
-                        else
-                            {
                             <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Manage</a>
                                 <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                    <a asp-area="Identity" asp-page="/Account/Register" class="dropdown-item">Register</a>
-                                    <a asp-area="Identity" asp-page="/Account/Login" class="dropdown-item">Login</a>
+                                    <a class="dropdown-item" asp-controller="Admin" asp-action="SetRoles" asp-route-userId="@UserManager.GetUserId(User)">Set Roles</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Books" asp-action="Index">Book</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Categories" asp-action="Index">Category</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Authors" asp-action="Index">Author</a>
                                 </div>
                             </div>
-                            }     
+                        }
+                        <a class="nav-item nav-link justify-content-center" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a asp-controller="Cart" asp-action="Index" class="nav-item nav-link justify-content-center">Cart</a>
+                        <a asp-controller="Orders" asp-action="Index" class="nav-item nav-link justify-content-center">Order</a>
+
+                        <div class="d-flex m-3 me-0">
+                            <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-user fa-2x"></i></a>
+                                <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                    @if (SignInManager.IsSignedIn(User))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                                            </form>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <div class="nav-item dropdown">
+                                            <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                                <a asp-area="Identity" asp-page="/Account/Register" class="dropdown-item">Register</a>
+                                                <a asp-area="Identity" asp-page="/Account/Login" class="dropdown-item">Login</a>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </nav>
         </div>
@@ -289,6 +284,9 @@
     <script src="~/layout/lib/waypoints/waypoints.min.js"></script>
     <script src="~/layout/lib/lightbox/js/lightbox.min.js"></script>
     <script src="~/layout/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="~/js/Business/Cart.js"></script>
+    <script src="~/js/Business/Product.js"></script>
+    <script src="~/js/Business/Order.js"></script>
 
     <!-- Template Javascript -->
     <script src="~/layout/js/main.js"></script>

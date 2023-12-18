@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>;
+<div>
+    <div class="container" style="padding-top: 120px; min-height:">
+        <div class="row">
+            <div class="col-md-12">
+                <h5>
+                    <p>
+                        <a asp-action="SetRole">Create New</a>
+                    </p>
+                </h5>
+            </div>
+        </div>
+</div>
+</div>
+<div>
+        <table class="table table-bordered">
+            <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Name
+            </th>
+            </tr>
+        
+        @foreach (var item in Model)
+        {
+            <tr>
+            <td>@item.Id</td>
+            <td>@item.UserName</td>
+                <td><a class="nav-item nav-link" asp-action="SetRoles" asp-route-userId="@item.Id">Set Role</a></td>
+            </tr>
+        }
+    </table>
+    </div>
