@@ -8,10 +8,10 @@ function redirectToLogin() {
 }
 
 function addToCart(bookId, quantity) {
-
     let url = `/api/carts/AddToCart/${bookId}/${quantity}`;
     // Use for Redirect to LoginPage
     let returnURL = getURL();
+    alert("Add to cart sucess");
     $.ajax({
         url: url,
         type: 'POST',
@@ -35,21 +35,24 @@ function addToCart(bookId, quantity) {
         }
     });
 }
+
 function editCart(bookId) {
 
-    delayInMilliseconds = 2000 // 2sec
+    delayInMilliseconds = 300 // 2sec
 
     setTimeout(function () {
         editCartNonDelay(bookId);
     }, delayInMilliseconds);
 }
 
+
 function editCartNonDelay(bookId) {
-    setTimeout()
-    var quantity = document.getElementById(`cart-item-${bookId}-quantity`);
+    // Remove the incomplete setTimeout here
+
+    var quantityElement = document.getElementById(`cart-item-${bookId}-quantity`);
+    var quantity = quantityElement.value; // Get the value property
 
     let url = `/api/carts/edit/${bookId}/${quantity}`;
-
     $.ajax({
         url: url,
         type: 'PATCH',
@@ -58,10 +61,11 @@ function editCartNonDelay(bookId) {
             console.log('Item Updated:', response);
         },
         error: function (error) {
-            console.error('Error adding item to cart:', error);
+            console.error('Error updating item in cart:', error);
         }
     });
 }
+
 function getCart() {
     $.ajax({
         url: '/api/carts/',
@@ -90,6 +94,9 @@ function getCart(size) {
     });
 
 }
+
+//updateCartItem
+
 // Delete a specific book from the cart
 function deleteCartItem(bookId) {
     $.ajax({

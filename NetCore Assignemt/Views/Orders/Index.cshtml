@@ -16,14 +16,12 @@
             </ol>
         </div>
 <!-- Single Page Header End -->
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Total)
+                Order ID
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Status)
@@ -32,25 +30,16 @@
                 @Html.DisplayNameFor(model => model.CreatedDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PaymentTranId)
+                @Html.DisplayNameFor(model => model.Total)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BankCode)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PayStatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th></th>
+            <th>Handle</th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Total)
+                @Html.DisplayFor(modelItem => item.User.Id)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
@@ -59,21 +48,10 @@
                 @Html.DisplayFor(modelItem => item.CreatedDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PaymentTranId)
+                @Html.DisplayFor(modelItem => item.Total)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BankCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PayStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i></a> 
             </td>
         </tr>
 }

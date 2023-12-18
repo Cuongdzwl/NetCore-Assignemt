@@ -228,15 +228,21 @@ namespace NetCore_Assignemt.Controllers
                     return Unauthorized();
                 }
 
-                var item = await _context.Cart.Where(c => c.BookId == bookid).Where(c => c.UserId == userId).FirstOrDefaultAsync();
+                var item = await _context.Cart
+                .Where(c => c.BookId == bookid)
+                .Where(c => c.UserId == userId)
+                .FirstOrDefaultAsync();
 
                 if (item == null)
                 {
                     return NotFound(new { Message = "Book Not Found!" });
                 }
+				item.Quantity = quantity ?? item.Quantity;  
 
-                _context.Cart.Update(item);
-                return Ok("Cart Updated successfully");
+				_context.Cart.Update(item);
+				await _context.SaveChangesAsync(); // Save changes to the database
+
+				return Ok("Cart Updated successfully");
             }
             catch (Exception ex)
             {

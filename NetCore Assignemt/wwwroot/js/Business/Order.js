@@ -29,5 +29,4 @@ function nextStage(orderId) {
             alert('Error advancing order stage: ' + error.responseText);
         }
     });
-}
-  });
+}   
