@@ -133,31 +133,31 @@ function isVnPaySelected() {
 function checkOut() {
     alert("Are you Sure?. This action can not be undone!");
     $.ajax({
-        url: "/api/carts/checkout",  // Replace with the actual URL of your controller
+        url: "/api/carts/checkout", 
         type: "POST",
         dataType: "json",
         contentType: "application/json; charset=utf-8",
-        headers: {
-            // Add any additional headers if needed, such as authorization headers
-        },
         success: function (data) {
-            console.log(data);
-
+            console.log(data)
             $("#checkout").html("Done")
+            // Disable the button
+            $('#checkout').prop('disabled', true);
             if (isVnPaySelected()) {
-
+                window.location.href = `/orders/pay/${data.orderId}`
             } else {
-                window.location.href = "/orders/return"
+                window.location.href = "/orders/"
             }
-
         },
         error: function (xhr, textStatus, errorThrown) {
-            // Handle the error response
-            $("#checkout").html(xhr.Message)
+            htmlAlert = '<div id="alert-message" class="alert alert-danger alert-dismissible" role="alert">' +
+                '<button type = "button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                xhr.responseJSON.message +
+                '</div >';
+            $("#alert-message").html(htmlAlert);
 
-                setTimeout(function () {
-                    $('#checkout').html('Place Order');
-                }, 2000); // C
+            setTimeout(function () {
+                $("#alert-message").html("");
+            }, 3000);
         }
     });
 }
