@@ -131,7 +131,6 @@ function isVnPaySelected() {
 
 
 function checkOut() {
-    alert("Are you Sure?. This action can not be undone!");
     $.ajax({
         url: "/api/carts/checkout", 
         type: "POST",

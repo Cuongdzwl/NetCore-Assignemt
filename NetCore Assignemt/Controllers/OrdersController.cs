@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -226,6 +227,7 @@ namespace NetCore_Assignemt.Controllers
                 var order = _context.Order.FirstOrDefault(x => x.Id == callback.vnp_TxnRef);
 
                 if (order == null) return new PaymentResponseDTO { RspCode = "-01", Message = "Order Not Found" };
+                if (callback.vnp_Amount != order.Total * 100) return new PaymentResponseDTO { RspCode = "-01", Message = "Transaction Error" };
 
                 var paymentId = callback.vnp_TransactionNo;
                 // Update to Db
@@ -297,7 +299,10 @@ namespace NetCore_Assignemt.Controllers
 
             if (_payment.CallBackValidate(callback, rawUrl))
             {
-                var result = UpdateOrderInfo(callback);
+                //var result = UpdateOrderInfo(callback);
+                string message;
+                VnPayServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
+                var result = new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
                 return View("Return", result);
             }
             // Unvalidate 
@@ -321,8 +326,8 @@ namespace NetCore_Assignemt.Controllers
             {
                 HttpContext.Response.Clear();
                 HttpContext.Response.WriteAsJsonAsync(result);
-
                 _logger.LogInformation(result.ToString());
+                UpdateOrderInfo(callback);
             }
 
             HttpContext.Response.Body.Close();
