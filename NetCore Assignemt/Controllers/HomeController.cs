@@ -16,15 +16,31 @@ namespace NetCore_Assignemt.Controllers
             this._db = db;
             _logger = logger;
         }
-        private List<Book> GetAllProducts()
+        private async Task<List<Book>> GetAllProducts()
         {
-            return _db.Book.ToList();
+            return await _db.Book.ToListAsync();
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var books = GetAllProducts();
+            var books = await GetAllProducts();
             ViewBag.Book = books;
             return View();
+        }
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null || _db.Book == null)
+            {
+                return NotFound();
+            }
+
+            var book = await _db.Book
+                .FirstOrDefaultAsync(m => m.BookId == id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            return View(book);
         }
 
         public IActionResult Privacy()
@@ -36,12 +52,6 @@ namespace NetCore_Assignemt.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        public IActionResult Cart()
-        {
-            ViewBag.Cart = _db.Cart.ToList();
-            return View();
         }
     }
 }

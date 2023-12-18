@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -22,10 +23,10 @@ namespace NetCore_Assignemt.Controllers
     public class OrdersController : Controller, IOrderServices
     {
         private readonly AppDbContext _context;
-        private readonly IPaymentServices _payment;
+        private readonly IVnPayServices _payment;
         private ILogger<OrdersController> _logger;
 
-        public OrdersController(AppDbContext context, IPaymentServices paymentServices, ILogger<OrdersController> logger)
+        public OrdersController(AppDbContext context, IVnPayServices paymentServices, ILogger<OrdersController> logger)
         {
             _context = context;
             _payment = paymentServices;
@@ -36,6 +37,7 @@ namespace NetCore_Assignemt.Controllers
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
         // GET: Orders
+        [Authorize(Roles = ("Admin,Mod"))]
         public async Task<IActionResult> Index()
         {
             var appDbContext = _context.Order.Include(o => o.User);
@@ -44,9 +46,8 @@ namespace NetCore_Assignemt.Controllers
 
         public async Task<IActionResult> MyOrders()
         {
-
-            var appDbContext = _context.Order.Include(o => o.User);
-            return View(await appDbContext.ToListAsync());
+            var appDbContext = _context.Order.Where(c => c.UserId == getUserId());
+            return View("Index", await appDbContext.ToListAsync());
         }
 
         // GET: Orders/Details/5
@@ -68,120 +69,120 @@ namespace NetCore_Assignemt.Controllers
             return View(order);
         }
 
-        // GET: Orders/Create
-        public IActionResult Create()
-        {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
-        }
+        //// GET: Orders/Create
+        //public IActionResult Create()
+        //{
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+        //    return View();
+        //}
 
-        // POST: Orders/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] NetCore_Assignemt.Models.Order order)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(order);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
-            return View(order);
-        }
+        //// POST: Orders/Create
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] NetCore_Assignemt.Models.Order order)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.Add(order);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
+        //    return View(order);
+        //}
 
-        // GET: Orders/Edit/5
-        public async Task<IActionResult> Edit(long? id)
-        {
-            if (id == null || _context.Order == null)
-            {
-                return NotFound();
-            }
+        //// GET: Orders/Edit/5
+        //public async Task<IActionResult> Edit(long? id)
+        //{
+        //    if (id == null || _context.Order == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var order = await _context.Order.FindAsync(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
-            return View(order);
-        }
+        //    var order = await _context.Order.FindAsync(id);
+        //    if (order == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
+        //    return View(order);
+        //}
 
-        // POST: Orders/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] Models.Order order)
-        {
-            if (id != order.Id)
-            {
-                return NotFound();
-            }
+        //// POST: Orders/Edit/5
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(long id, [Bind("Id,UserId,Total,Status,CreatedDate,PaymentTranId,BankCode,PayStatus")] Models.Order order)
+        //{
+        //    if (id != order.Id)
+        //    {
+        //        return NotFound();
+        //    }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!OrderExists(order.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
-            return View(order);
-        }
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(order);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!OrderExists(order.Id))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", order.UserId);
+        //    return View(order);
+        //}
 
-        // GET: Orders/Delete/5
-        public async Task<IActionResult> Delete(long? id)
-        {
-            if (id == null || _context.Order == null)
-            {
-                return NotFound();
-            }
+        //// GET: Orders/Delete/5
+        //public async Task<IActionResult> Delete(long? id)
+        //{
+        //    if (id == null || _context.Order == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var order = await _context.Order
-                .Include(o => o.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (order == null)
-            {
-                return NotFound();
-            }
+        //    var order = await _context.Order
+        //        .Include(o => o.User)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (order == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(order);
-        }
+        //    return View(order);
+        //}
 
-        // POST: Orders/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(long id)
-        {
-            if (_context.Order == null)
-            {
-                return Problem("Entity set 'AppDbContext.Order'  is null.");
-            }
-            var order = await _context.Order.FindAsync(id);
-            if (order != null)
-            {
-                _context.Order.Remove(order);
-            }
+        //// POST: Orders/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(long id)
+        //{
+        //    if (_context.Order == null)
+        //    {
+        //        return Problem("Entity set 'AppDbContext.Order'  is null.");
+        //    }
+        //    var order = await _context.Order.FindAsync(id);
+        //    if (order != null)
+        //    {
+        //        _context.Order.Remove(order);
+        //    }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         private bool OrderExists(long id)
         {
@@ -217,68 +218,78 @@ namespace NetCore_Assignemt.Controllers
         private PaymentResponseDTO UpdateOrderInfo(VnPayCallbackDTO callback)
         {
             string message;
-            // Find Order
-            var order = _context.Order.FirstOrDefault(x => x.Id == callback.vnp_TxnRef);
-
-            if (order == null) return new PaymentResponseDTO { RspCode = "-01", Message = "Order Not Found" };
-
-            var paymentId = callback.vnp_TransactionNo;
-            // Update to Db
-            _context.Transaction.Add(new Transaction
-            {
-                Id = paymentId,
-                vnp_TransactionStatus = callback.vnp_TransactionStatus,
-                vnp_BankCode = callback.vnp_BankCode,
-                vnp_Amount = callback.vnp_Amount,
-                vnp_OrderInfo = callback.vnp_OrderInfo,
-                vnp_PayDate = callback.vnp_PayDate,
-                vnp_CardType = callback.vnp_CardType,
-                vnp_BankTranNo = callback.vnp_BankTranNo,
-                vnp_ResponseCode = callback.vnp_ResponseCode,
-                vnp_TransactionNo = callback.vnp_TransactionNo
-            });
-
             // Check Responsecode
-            PaymentServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
-
+            VnPayServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
             if (message == null) message = "Unknown Error!";
-            // Update Inventory
-            if (callback.vnp_ResponseCode == "00" && callback.vnp_TransactionStatus == "00")
+            try
             {
-                var orderDetails = _context.OrderDetail
-                .Where(od => od.OrderId == order.Id)
-                .ToList();
+                // Find Order
+                var order = _context.Order.FirstOrDefault(x => x.Id == callback.vnp_TxnRef);
 
-                // Update book quantities based on order details
-                foreach (var orderDetail in orderDetails)
+                if (order == null) return new PaymentResponseDTO { RspCode = "-01", Message = "Order Not Found" };
+                if (callback.vnp_Amount != order.Total * 100) return new PaymentResponseDTO { RspCode = "-01", Message = "Transaction Error" };
+
+                var paymentId = callback.vnp_TransactionNo;
+                // Update to Db
+                _context.Transaction.Add(new Transaction
                 {
-                    var book = _context.Book.Find(orderDetail.BookId);
+                    Id = paymentId,
+                    vnp_TransactionStatus = callback.vnp_TransactionStatus,
+                    vnp_BankCode = callback.vnp_BankCode,
+                    vnp_Amount = callback.vnp_Amount,
+                    vnp_OrderInfo = callback.vnp_OrderInfo,
+                    vnp_PayDate = callback.vnp_PayDate,
+                    vnp_CardType = callback.vnp_CardType,
+                    vnp_BankTranNo = callback.vnp_BankTranNo,
+                    vnp_ResponseCode = callback.vnp_ResponseCode,
+                    vnp_TransactionNo = callback.vnp_TransactionNo
+                });
 
-                    if (book != null)
+
+                // Update Inventory
+                if (callback.vnp_ResponseCode == "00" && callback.vnp_TransactionStatus == "00")
+                {
+                    var orderDetails = _context.OrderDetail
+                    .Where(od => od.OrderId == order.Id)
+                    .ToList();
+
+                    // Update book quantities based on order details
+                    foreach (var orderDetail in orderDetails)
                     {
-                        // Update book quantity based on order detail quantity
-                        book.Quantity -= orderDetail.Quantity;
+                        var book = _context.Book.Find(orderDetail.BookId);
 
+                        if (book != null)
+                        {
+                            // Update book quantity based on order detail quantity
+                            book.Quantity -= orderDetail.Quantity;
+
+                        }
                     }
+                    order.Status = (int)OrderStatus.Packaging;
                 }
-                order.Status = (int)OrderStatus.Packaging;
+                else
+                {
+                    order.Status = (int)OrderStatus.Canceled;
+                }
+
+                order.PaymentTranId = paymentId;
+                order.BankCode = callback.vnp_BankCode;
+                order.PayStatus = message;
+
+
+                _context.Order.Update(order);
+
+                _context.SaveChanges();
+                return new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
             }
-            else
+            catch (Exception e)
             {
-                order.Status = (int)OrderStatus.Canceled;
+                return new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
+
             }
-
-            order.PaymentTranId = paymentId;
-            order.BankCode = callback.vnp_BankCode;
-            order.PayStatus = message;
-
-
-            _context.Order.Update(order);
-
-            _context.SaveChanges();
-            return new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
         }
 
+        // Client to Server
         [HttpGet]
         public IActionResult Return([FromQuery] VnPayCallbackDTO callback)
         {
@@ -288,13 +299,17 @@ namespace NetCore_Assignemt.Controllers
 
             if (_payment.CallBackValidate(callback, rawUrl))
             {
-                var result = UpdateOrderInfo(callback);
+                //var result = UpdateOrderInfo(callback);
+                string message;
+                VnPayServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
+                var result = new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
                 return View("Return", result);
             }
             // Unvalidate 
             return View("Return", new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = "Invalid Transaction" });
         }
 
+        // Server to Server
         [HttpGet]
         [Route("/IPN")]
         public async Task<IActionResult> IPN([FromQuery] VnPayCallbackDTO callback)
@@ -311,8 +326,8 @@ namespace NetCore_Assignemt.Controllers
             {
                 HttpContext.Response.Clear();
                 HttpContext.Response.WriteAsJsonAsync(result);
-
                 _logger.LogInformation(result.ToString());
+                UpdateOrderInfo(callback);
             }
 
             HttpContext.Response.Body.Close();

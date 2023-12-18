@@ -85,7 +85,6 @@ namespace NetCore_Assignemt.Controllers
             return Ok(cartDto);
         }
 
-
         [HttpPost("AddToCart/{bookId}")]
         public async Task<IActionResult> AddToCartAsync(int bookId)
         {
@@ -158,14 +157,14 @@ namespace NetCore_Assignemt.Controllers
 
             var userInfo = _context.Users.Where(c => c.Id == userId).FirstOrDefault();
 
-            if (userInfo == null) return NotFound("Some thing went wrong!");
-            if (userInfo.Address  == null || userInfo.Address.Length == 0) { return NotFound(new { message = "You need to provide your detailed Address before checking out!"}); }
-            if (userInfo.City == null || userInfo.City.Length == 0) { return NotFound(new { message = "You need to provide your City before checking out!" }); }
-            if (userInfo.District == null || userInfo.District.Length == 0) { return NotFound(new { message = "You need to provide your District before checking out!" }); }
-            if (userInfo.PhoneNumber == null || userInfo.PhoneNumber.Length < 8 || userInfo.PhoneNumber.Length > 12) { return NotFound(new { message = "You need to provide your PhoneNumber before checking out!" }); }
+            if (userInfo == null) return Unauthorized(new { message = "Some thing went wrong!" });
+            if (userInfo.Address  == null || userInfo.Address.Length == 0) { return Unauthorized(new { message = "You need to provide your detailed Address before checking out!"}); }
+            if (userInfo.City == null || userInfo.City.Length == 0) { return Unauthorized(new { message = "You need to provide your City before checking out!" }); }
+            if (userInfo.District == null || userInfo.District.Length == 0) { return Unauthorized(new { message = "You need to provide your District before checking out!" }); }
+            if (userInfo.PhoneNumber == null || userInfo.PhoneNumber.Length < 8 || userInfo.PhoneNumber.Length > 12) { return Unauthorized(new { message = "You need to provide your PhoneNumber before checking out!" }); }
 
             // Generate Order i
-            var orderId = GenerateOrderId();
+                long orderId = GenerateOrderId();
 
                 // Get the user's cart
                 var userCart = await _context.Cart.Include(c => c.Book).Where(c => c.Book.BookId == c.BookId).Where(c => c.UserId == userId).ToListAsync();
@@ -208,7 +207,8 @@ namespace NetCore_Assignemt.Controllers
                 string htmlContent = "Your Order ID." + orderId + " has been placed.";
 
                 await _sender.SendEmailAsync(userInfo.Email, "Order Placed on FPT Book",htmlContent);
-                return Ok(new { message = "Checked Out Successfully!"});
+
+                return Ok(new {OrderId = order.Id.ToString() ,  message = "Checked Out Successfully!"});
             }
             catch (Exception e)
             {
