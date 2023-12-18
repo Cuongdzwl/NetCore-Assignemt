@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using NetCore_Assignemt.Areas.Identity.Data;
 using NetCore_Assignemt.Models;
 
@@ -24,6 +25,8 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account.Manage
             UserManager<User> userManager,
             SignInManager<User> signInManager)
         {
+       
+
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -64,16 +67,23 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account.Manage
             public string Address { get; set; }
 
             [Required]
-            [Display(Name = "Birth Date")]
-            [DataType(DataType.Date)]
-            public DateTime DOB { get; set; }
-            [Phone]
-            [Display(Name = "Phone number")]
+            [DataType(DataType.Text)]
+            [Display(Name = "City")]
+            public string City { get; set; }
+            [Required]
+            [Display(Name = "Gender")]
+            [DataType(DataType.Text)]
             public string PhoneNumber { get; set; }
+            [Required]
+            [DataType(DataType.Text)]
+            [Display(Name = "District")]
+            public string District { get; set; }
+
         }
 
         private async Task LoadAsync(User user)
         {
+            user = await _userManager.GetUserAsync(User);
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
@@ -81,8 +91,13 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                Address = user.Address,
+                District = user.District,
+                City = user.City,
             };
+         
+
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -105,6 +120,8 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
+            await LoadAsync(user);
+
             if (!ModelState.IsValid)
             {
                 await LoadAsync(user);
@@ -125,11 +142,17 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account.Manage
             {
                 user.Address = Input.Address;
             }
-
-            if (Input.DOB != user.DOB)
+            if (Input.City != user.City)
             {
-                user.DOB = Input.DOB;
+                user.City = Input.City;
             }
+            if (Input.District != user.District)
+            {
+                user.District = Input.District;
+            }
+
+
+
 
             await _userManager.UpdateAsync(user);
             await _signInManager.RefreshSignInAsync(user);

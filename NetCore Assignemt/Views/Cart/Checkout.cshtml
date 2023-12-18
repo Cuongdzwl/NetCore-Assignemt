@@ -7,96 +7,129 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- Checkout Page Start -->
-<div class="container-fluid py-5">
-    <div class="container py-5">
-        <h1 class="mb-4">Billing details</h1>
-        <form action="#">
-            <div class="alert" ></div>
-            <div class="row g-5">   
-                <div class="col-md-12 col-lg-6 col-xl-7">
-                    <div class="form-item">
-                        <label class="form-label my-3">Full Name : @Model.Name</label>
-                    </div>
-                    <div class="form-item">
-                        <label class="form-label my-3">Address : @Model.Address</label>
-                    </div>
-                    <div class="form-item">
-                        <label class="form-label my-3">Phone Number : @Model.Phone</label>
-                    </div>
-                    <div class="form-item">
-                        <label class="form-label my-3">Email Address : @Model.Email</label>
-                    </div>
-                    <hr>
+<div class="container-fluid mt-5 py-5">
+    <div class="container mt05 py-5">
+        <h1 class="mb-4 text-center border-bottom">Order Confirmation</h1>   
+        
+        <div class="row g-5">
+            <div class="col-md-12 col-lg-6 col-xl-7">
+        <h3><b>Reciever Infomation</b></h3>
+                <div class="form-item">
+                    <label class="form-label my-3">Full Name:<b>@Model.Name</b></label>
                 </div>
-                <div class="col-md-12 col-lg-6 col-xl-5">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Products</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Quantity</th>
-                                    <th scope="col">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.Cart)
-                                {
-                                    <tr>
-                                        <th scope="row">
-                                            <div class="d-flex align-items-center mt-2">
-                                                <img src="/images/@item.Book.ImagePath" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
-                                            </div>
-                                        </th>
-                                        <td class="py-5">@item.Book.Title</td>
-                                        <td class="py-5">$@item.Book.Price</td>
-                                        <td class="py-5">@item.Quantity</td>
-                                        <td class="py-5">$@item.SubTotal</td>
-                                    </tr>
-                                }
-                                <tr>
-                                    <th scope="row">
-                                    </th>
-                                    <td class="py-5"></td>
-                                    <td class="py-5"></td>
-                                    <td class="py-5">
-                                        <p class="mb-0 text-dark py-3">Subtotal</p>
-                                    </td>
-                                    <td class="py-5">
-                                        <div class="py-3 border-bottom border-top">
-                                            <p class="mb-0 text-dark">@Model.Cart.Sum(p => p.SubTotal).ToString("#,##0") </p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                        <div class="col-12">
-                            <div class="form-check form-check-inline text-start my-3">
-                                <label class="form-check-label" for="Delivery-1">Cash On Delivery</label>
-                                <input type="radio" class="form-check-input border-0" id="Delivery-1" name="paymentMethod" value="CashOnDelivery" checked>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                        <div class="col-12">
-                            <div class="form-check form-check-inline text-start my-3">
-                                <label class="form-check-label" for="VnPay-1">VnPay</label>
-                                <input type="radio" class="form-check-input border-0" id="VnPay-1" name="paymentMethod" value="VnPay">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row g-4 text-center align-items-center justify-content-center pt-4">
-                        <button id="checkout" type="button" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary" onclick="checkOut()">Place Order</button>
-                    </div>
+                <div class="form-item">
+                    <label class="form-label my-3">Address: <b>@Model.Address</b></label>
+                </div>
+                <div class="form-item">
+                    <label class="form-label my-3">Phone Number: <b>@Model.Phone</b></label>
+                </div>
+                <div class="form-item">
+                    <label class="form-label my-3">Email Address: <b>@Model.Name</b></label>
+                </div>
+                <hr>
+                <div class="form-item">
+                    <input type="checkbox" id="info-verify">
+                    <label class="form-label my-3">I confirmed that the information is right.</label>
                 </div>
             </div>
-        </form>
+
+            <div class="col-md-12 col-lg-6 col-xl-5">
+                <h3 class="text-center"><b>Order List</b></h3>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Products</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Cart)
+                            {
+                                <tr>
+                                    <th scope="row">
+                                        <div class="d-flex align-items-center mt-2">
+                                            <img src="/images/@item.Book.ImagePath" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
+                                        </div>
+                                    </th>
+                                    <td class="py-5">@item.Book.Title</td>
+                                    <td class="py-5">$@item.Book.Price</td>
+                                    <td class="py-5">@item.Quantity</td>
+                                    <td class="py-5">$@item.SubTotal</td>
+                                </tr>
+                            }
+                            <tr>
+                                <th scope="row">
+                                </th>
+                                <td class="py-5"></td>
+                                <td class="py-5"></td>
+                                <td class="py-5">
+                                    <p class="mb-0 text-dark py-3 text-bold">Sub-Total:</p>
+                                </td>
+                                <td class="py-5">
+                                    <div class="py-3 border-bottom border-top">
+                                        <h5 class="mb-0 text-dark" style="color:#FFB524;"><b>@Model.Cart.Sum(p => p.SubTotal).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</b></h5>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                    <h5>Payment Method</h5>
+                    <div class="col">
+                        <label class="image-radio" for="Delivery-1">
+                            <input type="radio" class="radio-button" id="Delivery-1" name="paymentMethod" value="CashOnDelivery" checked>
+                            <img src="https://cdn-icons-png.flaticon.com/512/5578/5578525.png" height="60">
+                        </label>
+                    </div>
+                    <div class="col">
+                        <label class="image-radio" for="VnPay-1">
+                            <input type="radio" class="radio-button" id="VnPay-1" name="paymentMethod" value="VnPay">
+                            <img src="https://asset.brandfetch.io/idV02t6WJs/idyWhNall8.svg" height="60">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="row g-4 text-center align-items-center justify-content-center pt-4">
+                    <div id="alert-message"></div>
+                    <button id="checkout" type="button" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary" onclick="checkOut()">Place Order</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<style>
+    /* Hide the default radio button */
+    input[type="radio"] {
+        display: none;
+    }
+
+    /* Style the image container */
+    .image-radio {
+        display: inline-block;
+        cursor: pointer;
+    }
+
+        /* Style the image when the radio button is checked */
+        .image-radio input[type="radio"]:checked + img {
+            outline: 2px solid #007bff;
+        }
+</style>
+<script>
+    $(document).ready(function () {
+        // Add click event listener to each image radio button using jQuery
+        $('.image-radio .radio-button').on('click', function () {
+            // Remove outline from all images
+            $('.image-radio img').css('outline', 'none');
+
+            // Add outline to the clicked image
+            $(this).siblings('img').css('outline', '2px solid #007bff');
+        });
+    });
+</script>
 <!-- Checkout Page End -->
