@@ -86,10 +86,10 @@
                 @Html.DisplayFor(modelItem => item.CreatedDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BookAuthors.Select(c=>c.Authors))
+                @Html.DisplayFor(modelItem => item.BookAuthors.Authors.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BookCategories.Select(c=>c.Categories))
+                @Html.DisplayFor(modelItem => item.BookCategories.Categories.Name)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |

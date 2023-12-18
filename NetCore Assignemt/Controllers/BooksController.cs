@@ -16,18 +16,29 @@ namespace NetCore_Assignemt.Controllers
     {
         private readonly AppDbContext _context;
 
+        private readonly ILogger<BooksController> _logger;
 
-        public BooksController(AppDbContext context)
+        public BooksController(AppDbContext context, ILogger<BooksController> logger)
         {
             _context = context;
+            _logger = logger;
         }
-        
+
         // GET: Books
         public async Task<IActionResult> Index()
         {
-            return _context.Book != null ? 
-                          View(await _context.Book.ToListAsync()) :
-                          Problem("Entity set 'AppDbContext.Book'  is null.");
+            if (_context.Book == null)
+            {
+                return Problem("Book is null.");
+            }
+            var books = await _context.Book
+            .Include(b => b.BookAuthors)
+            .Include(b => b.BookCategories)
+            .Include(b => b.BookCategories.Categories)
+            .Include(b => b.BookAuthors.Authors)
+            .ToListAsync();
+
+            return View(books);
         }
 
         // GET: Books/Details/5
@@ -58,7 +69,7 @@ namespace NetCore_Assignemt.Controllers
             ViewData["CategoryId"] = new SelectList(categories, "CategoryId", "Name");
             return View();
         }
- 
+
 
         // POST: Books/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -67,24 +78,31 @@ namespace NetCore_Assignemt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Book book, BookCategory bookCategory, BookAuthor bookAuthor)
         {
-     
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(book);
-                await _context.SaveChangesAsync();
-                bookCategory.CategoryId = book.CategoryId;
-                bookCategory.BookId = book.BookId;
-                _context.Add(bookCategory);
-                bookAuthor.BookId = book.BookId;
-                bookAuthor.AuthorId = book.AuthorId;
-                _context.Add(bookAuthor);
-                await _context.SaveChangesAsync();
+                if (ModelState.IsValid)
+                {
+                    _context.Add(book);
+                    await _context.SaveChangesAsync();
+                    bookCategory.CategoryId = book.CategoryId;
+                    bookCategory.BookId = book.BookId;
+                    _context.Add(bookCategory);
+                    bookAuthor.BookId = book.BookId;
+                    bookAuthor.AuthorId = book.AuthorId;
+                    _context.Add(bookAuthor);
 
-                return RedirectToAction(nameof(Index));
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
             }
 
-            
-            
+
 
 
             return View(book);
@@ -131,7 +149,7 @@ namespace NetCore_Assignemt.Controllers
                     await _context.SaveChangesAsync();
                     var existingCategories = await _context.BookCategory.Where(bc => bc.BookId == book.BookId).ToListAsync();
                     _context.BookCategory.RemoveRange(existingCategories);
-                    if (bookCategory.CategoryId != 0) 
+                    if (bookCategory.CategoryId != 0)
                     {
                         var newBookCategory = new BookCategory { BookId = book.BookId, CategoryId = bookCategory.CategoryId };
                         _context.BookCategory.Add(newBookCategory);
@@ -139,7 +157,7 @@ namespace NetCore_Assignemt.Controllers
                     var existingAuthors = await _context.BookAuthor.Where(ba => ba.BookId == book.BookId).ToListAsync();
                     _context.BookAuthor.RemoveRange(existingAuthors);
 
-                    if (bookAuthor.AuthorId != 0) 
+                    if (bookAuthor.AuthorId != 0)
                     {
                         var newBookAuthor = new BookAuthor { BookId = book.BookId, AuthorId = bookAuthor.AuthorId };
                         _context.BookAuthor.Add(newBookAuthor);
@@ -199,14 +217,14 @@ namespace NetCore_Assignemt.Controllers
                 await _context.SaveChangesAsync();
                 _context.Book.Remove(book);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BookExists(int id)
         {
-          return (_context.Book?.Any(e => e.BookId == id)).GetValueOrDefault();
+            return (_context.Book?.Any(e => e.BookId == id)).GetValueOrDefault();
         }
     }
 }

@@ -322,7 +322,7 @@ namespace NetCore_Assignemt.Controllers
         }
 
         [HttpPost]
-        [Route("api/orders/nextstage/{id}")]
+        [Route("api/orders/cancel/{id}")]
         public async Task<IActionResult> Cancel(long id)
         {
             string userId = getUserId();
@@ -338,7 +338,7 @@ namespace NetCore_Assignemt.Controllers
                 order.Status = (int)OrderStatus.Canceled;
                 _context.SaveChanges();
             }
-            return Redirect("/orders");
+            return Ok(new { Message = "Operation successful." });
         }
 
         [HttpPost]
@@ -361,6 +361,7 @@ namespace NetCore_Assignemt.Controllers
             if (order.Status <= (int)OrderStatus.Completed && order.Status >= (int)OrderStatus.Pending)
             {
                 order.Status += 1;
+                _context.SaveChanges();
                 return Ok(new { Message = "Changed." });
             }
             _context.SaveChanges();

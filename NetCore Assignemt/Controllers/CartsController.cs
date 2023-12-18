@@ -140,7 +140,7 @@ namespace NetCore_Assignemt.Controllers
         {
             // Implement your logic to generate a unique order ID
             // Replace this with your actual implementation
-            return DateTime.Now.Ticks;
+            return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         }
 
         [HttpPost("checkout")]
