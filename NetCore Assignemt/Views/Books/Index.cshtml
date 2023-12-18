@@ -4,56 +4,73 @@
 @{
     ViewData["Title"] = "Index";
 }
-
+    <!-- Single Page Header start -->
+        <div class="container-fluid page-header py-5">
+            <h1 class="text-center text-white display-6">Book</h1>
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                <li class="breadcrumb-item active text-white">Book</li>
+            </ol>
+        </div>
+<!-- Single Page Header End -->
 <h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
+<hr />
+<div class="container" style="padding-top: 120px; min-height:">
+    <div class="row">
+        <div class="col-md-12">
+            <h5>
+                <p>
+                    <a asp-action="Create">Create New</a>
+                </p>
+            </h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+            <tr>
             <th>
-                Title
+                @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
-                Publisher
+                @Html.DisplayNameFor(model => model.Publisher)
             </th>
             <th>
-                Image   
+                @Html.DisplayNameFor(model => model.ImagePath)
             </th>
             <th>
-                Description
+                @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                Price
+                @Html.DisplayNameFor(model => model.Price)
             </th>
             <th>
-                Quantity
+                @Html.DisplayNameFor(model => model.Quantity)
             </th>
             <th>
-                CreatedDate
+                @Html.DisplayNameFor(model => model.CreatedDate)
             </th>
             <th>
                 Author
             </th>
             <th>
-                Category
+                Catogory
             </th>
             
             <th></th>
         </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Publisher)
-            </td>
-            <td>
+        </div>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Publisher)
+                </td>
+                <td>
                     <img src="/images/@item.ImagePath" class="img-responsive" width="200" height="200" />
             </td>
             <td>
