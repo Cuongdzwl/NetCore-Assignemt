@@ -16,13 +16,13 @@ namespace NetCore_Assignemt.Controllers
             this._db = db;
             _logger = logger;
         }
-        private List<Book> GetAllProducts()
+        private async Task<List<Book>> GetAllProducts()
         {
-            return _db.Book.ToList();
+            return await _db.Book.ToListAsync();
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var books = GetAllProducts();
+            var books = await GetAllProducts();
             ViewBag.Book = books;
             return View();
         }

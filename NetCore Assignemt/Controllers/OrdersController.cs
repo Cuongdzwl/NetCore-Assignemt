@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -42,10 +43,11 @@ namespace NetCore_Assignemt.Controllers
             var appDbContext = _context.Order.Include(o => o.User);
             return View(await appDbContext.ToListAsync());
         }
+
         public async Task<IActionResult> MyOrders()
         {
             var appDbContext = _context.Order.Where(c => c.UserId == getUserId());
-            return View(await appDbContext.ToListAsync());
+            return View("Index", await appDbContext.ToListAsync());
         }
 
         // GET: Orders/Details/5
@@ -216,66 +218,75 @@ namespace NetCore_Assignemt.Controllers
         private PaymentResponseDTO UpdateOrderInfo(VnPayCallbackDTO callback)
         {
             string message;
-            // Find Order
-            var order = _context.Order.FirstOrDefault(x => x.Id == callback.vnp_TxnRef);
-
-            if (order == null) return new PaymentResponseDTO { RspCode = "-01", Message = "Order Not Found" };
-
-            var paymentId = callback.vnp_TransactionNo;
-            // Update to Db
-            _context.Transaction.Add(new Transaction
-            {
-                Id = paymentId,
-                vnp_TransactionStatus = callback.vnp_TransactionStatus,
-                vnp_BankCode = callback.vnp_BankCode,
-                vnp_Amount = callback.vnp_Amount,
-                vnp_OrderInfo = callback.vnp_OrderInfo,
-                vnp_PayDate = callback.vnp_PayDate,
-                vnp_CardType = callback.vnp_CardType,
-                vnp_BankTranNo = callback.vnp_BankTranNo,
-                vnp_ResponseCode = callback.vnp_ResponseCode,
-                vnp_TransactionNo = callback.vnp_TransactionNo
-            });
-
             // Check Responsecode
             VnPayServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
-
             if (message == null) message = "Unknown Error!";
-            // Update Inventory
-            if (callback.vnp_ResponseCode == "00" && callback.vnp_TransactionStatus == "00")
+            try
             {
-                var orderDetails = _context.OrderDetail
-                .Where(od => od.OrderId == order.Id)
-                .ToList();
+                // Find Order
+                var order = _context.Order.FirstOrDefault(x => x.Id == callback.vnp_TxnRef);
 
-                // Update book quantities based on order details
-                foreach (var orderDetail in orderDetails)
+                if (order == null) return new PaymentResponseDTO { RspCode = "-01", Message = "Order Not Found" };
+                if (callback.vnp_Amount != order.Total * 100) return new PaymentResponseDTO { RspCode = "-01", Message = "Transaction Error" };
+
+                var paymentId = callback.vnp_TransactionNo;
+                // Update to Db
+                _context.Transaction.Add(new Transaction
                 {
-                    var book = _context.Book.Find(orderDetail.BookId);
+                    Id = paymentId,
+                    vnp_TransactionStatus = callback.vnp_TransactionStatus,
+                    vnp_BankCode = callback.vnp_BankCode,
+                    vnp_Amount = callback.vnp_Amount,
+                    vnp_OrderInfo = callback.vnp_OrderInfo,
+                    vnp_PayDate = callback.vnp_PayDate,
+                    vnp_CardType = callback.vnp_CardType,
+                    vnp_BankTranNo = callback.vnp_BankTranNo,
+                    vnp_ResponseCode = callback.vnp_ResponseCode,
+                    vnp_TransactionNo = callback.vnp_TransactionNo
+                });
 
-                    if (book != null)
+
+                // Update Inventory
+                if (callback.vnp_ResponseCode == "00" && callback.vnp_TransactionStatus == "00")
+                {
+                    var orderDetails = _context.OrderDetail
+                    .Where(od => od.OrderId == order.Id)
+                    .ToList();
+
+                    // Update book quantities based on order details
+                    foreach (var orderDetail in orderDetails)
                     {
-                        // Update book quantity based on order detail quantity
-                        book.Quantity -= orderDetail.Quantity;
+                        var book = _context.Book.Find(orderDetail.BookId);
 
+                        if (book != null)
+                        {
+                            // Update book quantity based on order detail quantity
+                            book.Quantity -= orderDetail.Quantity;
+
+                        }
                     }
+                    order.Status = (int)OrderStatus.Packaging;
                 }
-                order.Status = (int)OrderStatus.Packaging;
+                else
+                {
+                    order.Status = (int)OrderStatus.Canceled;
+                }
+
+                order.PaymentTranId = paymentId;
+                order.BankCode = callback.vnp_BankCode;
+                order.PayStatus = message;
+
+
+                _context.Order.Update(order);
+
+                _context.SaveChanges();
+                return new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
             }
-            else
+            catch (Exception e)
             {
-                order.Status = (int)OrderStatus.Canceled;
+                return new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
+
             }
-
-            order.PaymentTranId = paymentId;
-            order.BankCode = callback.vnp_BankCode;
-            order.PayStatus = message;
-
-
-            _context.Order.Update(order);
-
-            _context.SaveChanges();
-            return new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
         }
 
         // Client to Server
@@ -288,7 +299,10 @@ namespace NetCore_Assignemt.Controllers
 
             if (_payment.CallBackValidate(callback, rawUrl))
             {
-                var result = UpdateOrderInfo(callback);
+                //var result = UpdateOrderInfo(callback);
+                string message;
+                VnPayServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
+                var result = new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
                 return View("Return", result);
             }
             // Unvalidate 
@@ -312,8 +326,8 @@ namespace NetCore_Assignemt.Controllers
             {
                 HttpContext.Response.Clear();
                 HttpContext.Response.WriteAsJsonAsync(result);
-
                 _logger.LogInformation(result.ToString());
+                UpdateOrderInfo(callback);
             }
 
             HttpContext.Response.Body.Close();
