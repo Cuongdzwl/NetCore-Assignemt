@@ -28,7 +28,7 @@ function cancelOrder(orderId) {
 }
 
 
-function NextStage(orderId) {
+function nextStage(orderId) {
     console.log('orderId:', orderId);
     $.ajax({
         url: `/api/orders/nextstage/${orderId}`,

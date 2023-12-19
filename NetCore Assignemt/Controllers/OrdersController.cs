@@ -292,10 +292,10 @@ namespace NetCore_Assignemt.Controllers
 
             if (_payment.CallBackValidate(callback, rawUrl))
             {
-                //var result = UpdateOrderInfo(callback);
-                string message;
-                VnPayServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
-                var result = new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
+                var result = UpdateOrderInfo(callback);
+                //string message;
+                //VnPayServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
+                //var result = new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
                 return View("Return", result);
             }
             // Unvalidate 
@@ -335,15 +335,19 @@ namespace NetCore_Assignemt.Controllers
             string userId = getUserId();
             if (userId == null) return Unauthorized();
 
-            var order = await _context.Order.Where(c => c.UserId == userId).FirstOrDefaultAsync(c => c.Id == id);
+            var order = await _context.Order.FirstOrDefaultAsync(c => c.Id == id);
             if (order == null)
             {
                 return NotFound();
             }
-            if (order.Status != (int)OrderStatus.Canceled)
+            if (order.Status > (int)OrderStatus.Canceled)
             {
                 order.Status = (int)OrderStatus.Canceled;
                 _context.SaveChanges();
+            }
+            if (order.Status > (int)OrderStatus.Pending)
+            {
+                return Ok(new { Message = "Already Paid." });
             }
             return Ok(new { Message = "Operation successful." });
         }
@@ -356,7 +360,7 @@ namespace NetCore_Assignemt.Controllers
             string userId = getUserId();
             if (userId == null) return Unauthorized();
 
-            var order = await _context.Order.Where(c => c.UserId == userId).FirstOrDefaultAsync(c => c.Id == id);
+            var order = await _context.Order.FirstOrDefaultAsync(c => c.Id == id);
             if (order == null)
             {
                 return NotFound();
@@ -365,7 +369,7 @@ namespace NetCore_Assignemt.Controllers
             {
                 return Ok(new { Message = "Order already cancelled." });
             }
-            if (order.Status <= (int)OrderStatus.Completed && order.Status >= (int)OrderStatus.Pending)
+            if (order.Status < (int)OrderStatus.Completed && order.Status >= (int)OrderStatus.Pending)
             {
                 order.Status += 1;
                 _context.SaveChanges();

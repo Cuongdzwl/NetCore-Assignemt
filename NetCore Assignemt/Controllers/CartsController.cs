@@ -120,8 +120,7 @@ namespace NetCore_Assignemt.Controllers
                     userCart = new Cart { UserId = userId, BookId = bookId, Quantity = quantity };
                     _context.Cart.Add(userCart);
                 }
-                // Modify
-                if (userCart != null)
+                else if (userCart != null)
                 {
                     userCart.Quantity += quantity;
                 }

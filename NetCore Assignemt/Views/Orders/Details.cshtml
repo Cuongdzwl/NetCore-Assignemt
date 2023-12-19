@@ -67,7 +67,12 @@
     <button class="btn btn-danger" onclick="cancelOrder(@Model.Id)">Cancel Order</button> |
     @if (User.IsInRole("Admin") || User.IsInRole("Mod"))
     {
-        <button class="btn btn-success" onclick="NextStage(@Model.Id)">Move to Next Stage</button>
-                             }
-    <a asp-action="Index">Back to List</a>
+        <button class="btn btn-success" onclick="nextStage(@Model.Id)">Move to Next Stage</button>
+        <a asp-action="Index" class="btn btn-dark">Back to List</a>
+    }
+    else
+    {
+        <a asp-action="MyOrders" class="btn btn-dark">Back to List</a>
+
+    }
 </div>
