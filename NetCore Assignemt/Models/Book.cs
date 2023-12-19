@@ -33,9 +33,11 @@ namespace NetCore_Assignemt.Models
 
         public DateTime? CreatedDate { get; set; } = DateTime.UtcNow;
         public int AuthorId { get; set; }
-        public virtual ICollection<BookAuthor>? BookAuthors { get; set; }
+
+
+        public virtual BookAuthor? BookAuthors { get; set; }
         public int? CategoryId { get; set; }
-        public virtual ICollection<BookCategory>? BookCategories { get; set; }
+        public virtual BookCategory? BookCategories { get; set; }
 
     }
 }

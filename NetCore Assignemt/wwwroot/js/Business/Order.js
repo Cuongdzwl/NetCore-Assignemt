@@ -1,32 +1,51 @@
-﻿function cancelOrder(orderId) {
+﻿
+function getURL() {
+    return window.location.href ="/Orders";
+}
+function redirectToLogin() {
+    window.location.href = '/Identity/Account/Login';
+}
+function cancelOrder(orderId) {
+    let orderIdString = orderId
     $.ajax({
+        url: `/api/orders/cancel/${orderIdString}`,
         type: 'POST',
-        url: '/api/orders/nextstage/' + orderId,
-        success: function () {
-            // Handle success (e.g., update UI, show a message)
-            alert('Order canceled successfully.');
-            // Redirect to /orders page
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function (response) {
+            console.log('Order canceled:', response);
+
             window.location.href = '/orders';
         },
         error: function (error) {
-            // Handle error (e.g., show an error message)
-            alert('Error cancelling order: ' + error.responseText);
+            console.error('Error canceling order:', error);
+
+            if (error.status === 401) {
+                redirectToLogin(getURL());
+            }
         }
     });
 }
 
-// Function to make an AJAX request to advance the order stage
-function nextStage(orderId) {
+
+function NextStage(orderId) {
+    console.log('orderId:', orderId);
     $.ajax({
+        url: `/api/orders/nextstage/${orderId}`,
         type: 'POST',
-        url: '/api/orders/nextstage/' + orderId,
-        success: function (data) {
-            // Handle success (e.g., update UI, show a message)
-            alert(data.Message);
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function (response) {
+            console.log('Order status changed:', response.Message);
+
+            window.location.href = '/orders';
         },
         error: function (error) {
-            // Handle error (e.g., show an error message)
-            alert('Error advancing order stage: ' + error.responseText);
+            console.error('Error changing order status:', error);
+
+            if (error.status === 401) {
+                redirectToLogin(getURL());
+            }
         }
     });
 }
