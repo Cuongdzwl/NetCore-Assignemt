@@ -6,50 +6,47 @@ function getURL() {
 function redirectToLogin() {
     window.location.href = '/Identity/Account/Login';
 }
-
 function addToCart(bookId, quantity) {
 
+    delayInMilliseconds = 500 
+
+    setTimeout(function () {
+        addToCartNonDelay(bookId, quantity);
+    }, delayInMilliseconds);
+}
+function addToCartNonDelay(bookId, quantity) {
     let url = `/api/carts/AddToCart/${bookId}/${quantity}`;
     // Use for Redirect to LoginPage
-    let returnURL = getURL();
     $.ajax({
         url: url,
         type: 'POST',
         contentType: 'application/json',
         success: function (response) {
-            console.log('Item added to cart:', response);
-            // Change classes
-            var button = $(this);
-
-            button.removeClass('btn-primary').addClass('btn-success');
-            button.find('.addToCartIcon').removeClass('fa-cart-shopping').addClass('fa-check');
-
-            // Set a timeout to revert the changes after 1 second
-            setTimeout(function () {
-                button.removeClass('btn-success').addClass('btn-primary');
-                button.find('.addToCartIcon').removeClass('fa-check').addClass('fa-cart-shopping');
-            }, 1000);
+            alert("Add to cart sucess");
         },
         error: function (error) {
             redirectToLogin();
         }
     });
 }
+
 function editCart(bookId) {
 
-    delayInMilliseconds = 2000 // 2sec
+    delayInMilliseconds = 300 // 2sec
 
     setTimeout(function () {
         editCartNonDelay(bookId);
     }, delayInMilliseconds);
 }
 
+
 function editCartNonDelay(bookId) {
-    setTimeout()
-    var quantity = document.getElementById(`cart-item-${bookId}-quantity`);
+    // Remove the incomplete setTimeout here
+
+    var quantityElement = document.getElementById(`cart-item-${bookId}-quantity`);
+    var quantity = quantityElement.value; // Get the value property
 
     let url = `/api/carts/edit/${bookId}/${quantity}`;
-
     $.ajax({
         url: url,
         type: 'PATCH',
@@ -58,10 +55,11 @@ function editCartNonDelay(bookId) {
             console.log('Item Updated:', response);
         },
         error: function (error) {
-            console.error('Error adding item to cart:', error);
+            console.error('Error updating item in cart:', error);
         }
     });
 }
+
 function getCart() {
     $.ajax({
         url: '/api/carts/',
@@ -90,6 +88,9 @@ function getCart(size) {
     });
 
 }
+
+//updateCartItem
+
 // Delete a specific book from the cart
 function deleteCartItem(bookId) {
     $.ajax({
@@ -131,20 +132,23 @@ function isVnPaySelected() {
 
 
 function checkOut() {
+    $("#checkout").html("Processing...")
+    $('#checkout').prop('disabled', true);
+
     $.ajax({
-        url: "/api/carts/checkout", 
+        url: "/api/carts/checkout",
         type: "POST",
         dataType: "json",
         contentType: "application/json; charset=utf-8",
         success: function (data) {
-            console.log(data)
             $("#checkout").html("Done")
             // Disable the button
             $('#checkout').prop('disabled', true);
             if (isVnPaySelected()) {
+
                 window.location.href = `/orders/pay/${data.orderId}`
             } else {
-                window.location.href = "/orders/"
+                window.location.href = "/orders/myorders"
             }
         },
         error: function (xhr, textStatus, errorThrown) {
@@ -152,7 +156,10 @@ function checkOut() {
                 '<button type = "button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
                 xhr.responseJSON.message +
                 '</div >';
+
             $("#alert-message").html(htmlAlert);
+            $('#checkout').prop('disabled', false);
+            $("#checkout").html("place order")
 
             setTimeout(function () {
                 $("#alert-message").html("");

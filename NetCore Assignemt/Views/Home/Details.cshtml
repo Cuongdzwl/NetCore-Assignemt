@@ -1,8 +1,8 @@
-﻿Fbtn@model NetCore_Assignemt.Models.Book
+﻿@model NetCore_Assignemt.Models.Book
 
 
 <div class="container-fluid py-5 mt-5">
-    <div class="container py-5">
+    <div class="container mt-5 py-5">
         <div class="row g-4 mb-5">
             <div class="col-lg-8 col-xl-9">
                 <div class="row g-4">
@@ -38,7 +38,7 @@
                                 </button>
                             </div>
                         </div>
-                        <button onclick='addToCart(@Model.BookId,$("#item-quantity").attr("value"))' class="btn btn-primary float-right addToCartButton"><i name="" class="fa-solid fa-cart-shopping addToCartIcon"></i></button>
+                        <button onclick='addToCart(@Model.BookId,$("#item-quantity").attr("value"))' class="btn btn-primary float-right addToCartButton" asp-controller="Cart" asp-action="Index"><i name="" class="fa-solid fa-cart-shopping addToCartIcon"></i></button>
                     </div>
                     <div class="col-lg-12">
                         <nav>
@@ -58,12 +58,7 @@
                         <div class="tab-content mb-5">
                             <div class="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
                                 <p>
-                                    The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic words etc.
-                                    Susp endisse ultricies nisi vel quam suscipit
-                                </p>
-                                <p>
-                                    Sabertooth peacock flounder; chain pickerel hatchetfish, pencilfish snailfish filefish Antarctic
-                                    icefish goldeye aholehole trumpetfish pilot fish airbreathing catfish, electric ray sweeper.
+                                    @Model.Description
                                 </p>
                             </div>
                             <div class="tab-pane" id="nav-mission" role="tabpanel" aria-labelledby="nav-mission-tab">

@@ -120,8 +120,7 @@ namespace NetCore_Assignemt.Controllers
                     userCart = new Cart { UserId = userId, BookId = bookId, Quantity = quantity };
                     _context.Cart.Add(userCart);
                 }
-                // Modify
-                if (userCart != null)
+                else if (userCart != null)
                 {
                     userCart.Quantity += quantity;
                 }
@@ -140,7 +139,7 @@ namespace NetCore_Assignemt.Controllers
         {
             // Implement your logic to generate a unique order ID
             // Replace this with your actual implementation
-            return DateTime.Now.Ticks;
+            return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         }
 
         [HttpPost("checkout")]
@@ -229,15 +228,21 @@ namespace NetCore_Assignemt.Controllers
                     return Unauthorized();
                 }
 
-                var item = await _context.Cart.Where(c => c.BookId == bookid).Where(c => c.UserId == userId).FirstOrDefaultAsync();
+                var item = await _context.Cart
+                .Where(c => c.BookId == bookid)
+                .Where(c => c.UserId == userId)
+                .FirstOrDefaultAsync();
 
                 if (item == null)
                 {
                     return NotFound(new { Message = "Book Not Found!" });
                 }
+				item.Quantity = quantity ?? item.Quantity;  
 
-                _context.Cart.Update(item);
-                return Ok("Cart Updated successfully");
+				_context.Cart.Update(item);
+				await _context.SaveChangesAsync(); // Save changes to the database
+
+				return Ok("Cart Updated successfully");
             }
             catch (Exception ex)
             {

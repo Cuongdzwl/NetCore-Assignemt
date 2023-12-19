@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
+using SendGrid.Helpers.Mail;
 using System.Diagnostics;
 
 namespace NetCore_Assignemt.Controllers
@@ -16,14 +17,20 @@ namespace NetCore_Assignemt.Controllers
             this._db = db;
             _logger = logger;
         }
-        private async Task<List<Book>> GetAllProducts()
+        private List<Book> GetAllProducts()
         {
-            return await _db.Book.ToListAsync();
+            return _db.Book.ToList();
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> IndexAsync()
         {
-            var books = await GetAllProducts();
+            var books = await _db.Book
+         .Include(b => b.BookAuthors)
+         .Include(b => b.BookCategories)
+         .Include(b => b.BookCategories.Categories)
+         .Include(b => b.BookAuthors.Authors)
+         .ToListAsync();
             ViewBag.Book = books;
+
             return View();
         }
         public async Task<IActionResult> Details(int? id)

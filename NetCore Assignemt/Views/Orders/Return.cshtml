@@ -6,9 +6,18 @@
 }
 
 <div class="container-fluid mt-5 py-5">
-    <div class="container mt-5 py-5">
+    <div class="container mt-5 py-5 pt-2">
         <h1 class="mb-4 text-center border-bottom"><b>Thank you!</b></h1>
-        <p>Code: @Model.RspCode</p>
-        <p>Message: @Model.Message</p>
+        <div class="container mt-5">
+            <div class="text-center">
+                <!-- Display payment status with dynamic background color -->
+                <h2 class="font-weight-bold" id="paymentStatus" style="color: white;">@Model.Message</h2>
+
+                <!-- Display response code in a pill badge -->
+                <div class="mt-3">
+                    <span class="badge badge-pill badge-secondary" id="responseCode">Code: @Model.RspCode</span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NetCore_Assignemt.Common;
 using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
 using NetCore_Assignemt.Services;
 using NetCore_Assignemt.Services.DTO;
-using sib_api_v3_sdk.Model;
 
 namespace NetCore_Assignemt.Controllers
 {
@@ -40,13 +31,15 @@ namespace NetCore_Assignemt.Controllers
         [Authorize(Roles = ("Admin,Mod"))]
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Order.Include(o => o.User);
+            var appDbContext = _context.Order.OrderByDescending(e => e.CreatedDate).Include(o => o.User);
             return View(await appDbContext.ToListAsync());
         }
 
         public async Task<IActionResult> MyOrders()
         {
-            var appDbContext = _context.Order.Where(c => c.UserId == getUserId());
+            var appDbContext = _context.Order
+                .OrderByDescending(e => e.CreatedDate)
+                .Where(c => c.UserId == getUserId());
             return View("Index", await appDbContext.ToListAsync());
         }
 
@@ -336,23 +329,27 @@ namespace NetCore_Assignemt.Controllers
         }
 
         [HttpPost]
-        [Route("api/orders/nextstage/{id}")]
+        [Route("api/orders/cancel/{id}")]
         public async Task<IActionResult> Cancel(long id)
         {
             string userId = getUserId();
             if (userId == null) return Unauthorized();
 
-            var order = await _context.Order.Where(c => c.UserId == userId).FirstOrDefaultAsync(c => c.Id == id);
+            var order = await _context.Order.FirstOrDefaultAsync(c => c.Id == id);
             if (order == null)
             {
                 return NotFound();
             }
-            if (order.Status != (int)OrderStatus.Canceled)
+            if (order.Status > (int)OrderStatus.Canceled)
             {
                 order.Status = (int)OrderStatus.Canceled;
                 _context.SaveChanges();
             }
-            return Redirect("/orders");
+            if (order.Status > (int)OrderStatus.Pending)
+            {
+                return Ok(new { Message = "Already Paid." });
+            }
+            return Ok(new { Message = "Operation successful." });
         }
 
         [HttpPost]
@@ -363,7 +360,7 @@ namespace NetCore_Assignemt.Controllers
             string userId = getUserId();
             if (userId == null) return Unauthorized();
 
-            var order = await _context.Order.Where(c => c.UserId == userId).FirstOrDefaultAsync(c => c.Id == id);
+            var order = await _context.Order.FirstOrDefaultAsync(c => c.Id == id);
             if (order == null)
             {
                 return NotFound();
@@ -372,9 +369,10 @@ namespace NetCore_Assignemt.Controllers
             {
                 return Ok(new { Message = "Order already cancelled." });
             }
-            if (order.Status <= (int)OrderStatus.Completed && order.Status >= (int)OrderStatus.Pending)
+            if (order.Status < (int)OrderStatus.Completed && order.Status >= (int)OrderStatus.Pending)
             {
                 order.Status += 1;
+                _context.SaveChanges();
                 return Ok(new { Message = "Changed." });
             }
             _context.SaveChanges();
