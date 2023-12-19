@@ -303,29 +303,33 @@ namespace NetCore_Assignemt.Controllers
         }
 
         // Server to Server
-        [HttpGet]
-        [Route("/IPN")]
+        [HttpGet("/ipn")]
+        [AllowAnonymous]
         public async Task<IActionResult> IPN([FromQuery] VnPayCallbackDTO callback)
         {
-            // Debug WIP
-            _logger.LogInformation("IPN Catched: " + HttpContext.Request.QueryString);
-
-            string rawUrl = HttpContext.Request.QueryString + "";
-            // Get order info
-            var order = await _context.Order.FirstOrDefaultAsync(c => c.Id == callback.vnp_TxnRef);
-
-            // Encoding Response
-            using (var result = new StringContent(_payment.InstantPaymentNotification(callback, rawUrl, order), System.Text.Encoding.UTF8, "application/json"))
+            try
             {
+                // Debug WIP
+                _logger.LogInformation("IPN Catched: " + HttpContext.Request.QueryString);
+
+                string rawUrl = HttpContext.Request.QueryString + "";
+                // Get order info
+                var order = await _context.Order.FirstOrDefaultAsync(c => c.Id == callback.vnp_TxnRef);
+
+                // Encoding Response
                 HttpContext.Response.Clear();
-                HttpContext.Response.WriteAsJsonAsync(result);
-                _logger.LogInformation(result.ToString());
-                UpdateOrderInfo(callback);
+                using (var result = new StringContent(_payment.InstantPaymentNotification(callback, rawUrl, order), System.Text.Encoding.UTF8, "application/json"))
+                {
+                    UpdateOrderInfo(callback);
+                    _logger.LogInformation(result.ToString());
+                    return Ok(result);
+                }
             }
-
-            HttpContext.Response.Body.Close();
-
-            return Ok();
+            catch (Exception e)
+            {
+                _logger.LogInformation(e.ToString());
+                return BadRequest();
+            }
         }
 
         [HttpPost]
