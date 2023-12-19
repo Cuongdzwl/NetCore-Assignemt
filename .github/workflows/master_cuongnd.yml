@@ -54,4 +54,4 @@ jobs:
           app-name: 'cuongnd'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_71F60CD609134A1ABB0B53FC26FB06C3 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_46B137D036E34130952B7DAE07DC4459 }}
