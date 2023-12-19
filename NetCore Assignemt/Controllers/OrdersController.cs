@@ -292,10 +292,10 @@ namespace NetCore_Assignemt.Controllers
 
             if (_payment.CallBackValidate(callback, rawUrl))
             {
-                var result = UpdateOrderInfo(callback);
-                //string message;
-                //VnPayServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
-                //var result = new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
+                //var result = UpdateOrderInfo(callback);
+                string message;
+                VnPayServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
+                var result = new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
                 return View("Return", result);
             }
             // Unvalidate 
