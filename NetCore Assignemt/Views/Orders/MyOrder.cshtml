@@ -8,47 +8,61 @@
 <h1>Index</h1>
 <!-- Single Page Header start -->
 <div class="container-fluid page-header py-5">
-    <h1 class="text-center text-white display-6">Order</h1>
-    <ol class="breadcrumb justify-content-center mb-0">
-        <li class="breadcrumb-item"><a href="#">Home</a></li>
-        <li class="breadcrumb-item"><a href="#">Pages</a></li>
-        <li class="breadcrumb-item active text-white">Order</li>
-    </ol>
+    <h1 class="text-center text-white display-6">My Order</h1>
 </div>
 <!-- Single Page Header End -->
+<div class="m-2 ps-2 pe-2">
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PayStatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Total)
-            </th>
-            <th>Handle</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Status)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PayStatus)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Total)
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i></a> 
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PayStatus)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Total)
+                </th>
+                <th>Handle</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    <td>
+                        @switch (item.Status)
+                        {
+                            case -1:
+                                <span class="badge rounded-pill badge-danger" style="background-color:#C62828">Canceled</span>
+                                break;
+                            case 0:
+                                <span class="badge rounded-pill badge-warning" style="background-color:#FF9800">Pending</span>
+                                break;
+                            case 1:
+                                <span class="badge rounded-pill badge-secondary" style="background-color:#673AB7">Packaging</span>
+                                break;
+                            case 2:
+                                <span class="badge rounded-pill badge-primary" style="background-color:#26C6DA">Shipping</span>
+
+                                break;
+                            case 3:
+                                <span class="badge rounded-pill badge-success" style="background-color:#388E3C">Completed</span>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        <b>@item.Total.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</b>
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>

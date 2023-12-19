@@ -40,13 +40,15 @@ namespace NetCore_Assignemt.Controllers
         [Authorize(Roles = ("Admin,Mod"))]
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Order.Include(o => o.User);
+            var appDbContext = _context.Order.OrderByDescending(e => e.CreatedDate).Include(o => o.User);
             return View(await appDbContext.ToListAsync());
         }
 
         public async Task<IActionResult> MyOrders()
         {
-            var appDbContext = _context.Order.Where(c => c.UserId == getUserId());
+            var appDbContext = _context.Order
+                .OrderByDescending(e => e.CreatedDate)
+                .Where(c => c.UserId == getUserId());
             return View("Index", await appDbContext.ToListAsync());
         }
 
