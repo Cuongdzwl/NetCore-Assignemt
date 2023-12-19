@@ -71,8 +71,7 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account.Manage
             [Display(Name = "City")]
             public string City { get; set; }
             [Required]
-            [Display(Name = "Gender")]
-            [DataType(DataType.Text)]
+            [Display(Name = "Phone Number")]
             public string PhoneNumber { get; set; }
             [Required]
             [DataType(DataType.Text)]
@@ -83,7 +82,6 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadAsync(User user)
         {
-            user = await _userManager.GetUserAsync(User);
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
@@ -120,8 +118,6 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            await LoadAsync(user);
-
             if (!ModelState.IsValid)
             {
                 await LoadAsync(user);
@@ -150,9 +146,6 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account.Manage
             {
                 user.District = Input.District;
             }
-
-
-
 
             await _userManager.UpdateAsync(user);
             await _signInManager.RefreshSignInAsync(user);

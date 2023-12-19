@@ -13,8 +13,6 @@ namespace NetCore_Assignemt.Areas.Identity.Data
         public string? City { get; set; }
         [PersonalData]
         public string? District { get; set; }
-        [PersonalData]
-        public string? Gender { get; set; }
 
         public virtual ICollection<Order>? Orders { get; set; }
     }
