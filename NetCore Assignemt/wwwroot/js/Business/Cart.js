@@ -14,6 +14,7 @@ function addToCart(bookId, quantity) {
         addToCartNonDelay(bookId, quantity);
     }, delayInMilliseconds);
 }
+
 function addToCartNonDelay(bookId, quantity) {
     let url = `/api/carts/AddToCart/${bookId}/${quantity}`;
     // Use for Redirect to LoginPage
