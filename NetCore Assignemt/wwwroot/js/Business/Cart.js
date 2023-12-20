@@ -45,7 +45,13 @@ function editCartNonDelay(bookId) {
     // Remove the incomplete setTimeout here
 
     var quantityElement = document.getElementById(`cart-item-${bookId}-quantity`);
-    var quantity = quantityElement.value; // Get the value property
+    var quantity = quantityElement.value;
+
+    // Kiểm tra nếu giá trị là 0, đặt lại thành 1
+    if (parseInt(quantity) === 0) {
+        quantityElement.value = 1;
+        quantity = 1;
+    }
 
     let url = `/api/carts/edit/${bookId}/${quantity}`;
     $.ajax({
@@ -59,6 +65,14 @@ function editCartNonDelay(bookId) {
             console.error('Error updating item in cart:', error);
         }
     });
+}
+
+// Function to check value when focus is lost
+function checkQuantity(input) {
+    var value = input.value;
+    if (parseInt(value) === 0) {
+        input.value = 1;
+    }
 }
 
 function getCart() {
