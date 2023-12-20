@@ -31,25 +31,39 @@ function addToCartNonDelay(bookId, quantity) {
     });
 }
 
-function editCart(bookId) {
+function decreaseQuantity() {
+    var quantityElement = $("#item-quantity");
+    var currentQuantity = parseInt(quantityElement.val());
 
-    delayInMilliseconds = 300 // 2sec
+    // Giảm giá trị đi 1 đơn vị, không để giảm xuống dưới 1
+    if (currentQuantity > 1) {
+        quantityElement.val(currentQuantity - 1);
+    }
+}
+
+function increaseQuantity() {
+    var quantityElement = $("#item-quantity");
+    var currentQuantity = parseInt(quantityElement.val());
+
+    // Tăng giá trị lên 1 đơn vị, không để tăng quá 1
+    quantityElement.val(currentQuantity + 1);
+}
+
+function editCart(bookId) {
+    delayInMilliseconds = 300 // 0.3 sec
 
     setTimeout(function () {
         editCartNonDelay(bookId);
     }, delayInMilliseconds);
 }
 
-
 function editCartNonDelay(bookId) {
-    // Remove the incomplete setTimeout here
-
-    var quantityElement = document.getElementById(`cart-item-${bookId}-quantity`);
-    var quantity = quantityElement.value;
+    var quantityElement = $("#item-quantity");
+    var quantity = quantityElement.val();
 
     // Kiểm tra nếu giá trị là 0, đặt lại thành 1
     if (parseInt(quantity) === 0) {
-        quantityElement.value = 1;
+        quantityElement.val(1);
         quantity = 1;
     }
 
