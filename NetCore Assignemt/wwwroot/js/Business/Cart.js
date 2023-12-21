@@ -14,6 +14,7 @@ function addToCart(bookId, quantity) {
         addToCartNonDelay(bookId, quantity);
     }, delayInMilliseconds);
 }
+
 function addToCartNonDelay(bookId, quantity) {
     let url = `/api/carts/AddToCart/${bookId}/${quantity}`;
     // Use for Redirect to LoginPage
@@ -30,21 +31,41 @@ function addToCartNonDelay(bookId, quantity) {
     });
 }
 
-function editCart(bookId) {
+function decreaseQuantity() {
+    var quantityElement = $("#item-quantity");
+    var currentQuantity = parseInt(quantityElement.val());
 
-    delayInMilliseconds = 300 // 2sec
+    // Giảm giá trị đi 1 đơn vị, không để giảm xuống dưới 1
+    if (currentQuantity > 1) {
+        quantityElement.val(currentQuantity - 1);
+    }
+}
+
+function increaseQuantity() {
+    var quantityElement = $("#item-quantity");
+    var currentQuantity = parseInt(quantityElement.val());
+
+    // Tăng giá trị lên 1 đơn vị, không để tăng quá 1
+    quantityElement.val(currentQuantity + 1);
+}
+
+function editCart(bookId) {
+    delayInMilliseconds = 300 // 0.3 sec
 
     setTimeout(function () {
         editCartNonDelay(bookId);
     }, delayInMilliseconds);
 }
 
-
 function editCartNonDelay(bookId) {
-    // Remove the incomplete setTimeout here
+    var quantityElement = $("#item-quantity");
+    var quantity = quantityElement.val();
 
-    var quantityElement = document.getElementById(`cart-item-${bookId}-quantity`);
-    var quantity = quantityElement.value; // Get the value property
+    // Kiểm tra nếu giá trị là 0, đặt lại thành 1
+    if (parseInt(quantity) === 0) {
+        quantityElement.val(1);
+        quantity = 1;
+    }
 
     let url = `/api/carts/edit/${bookId}/${quantity}`;
     $.ajax({
@@ -58,6 +79,14 @@ function editCartNonDelay(bookId) {
             console.error('Error updating item in cart:', error);
         }
     });
+}
+
+// Function to check value when focus is lost
+function checkQuantity(input) {
+    var value = input.value;
+    if (parseInt(value) === 0) {
+        input.value = 1;
+    }
 }
 
 function getCart() {

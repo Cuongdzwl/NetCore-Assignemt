@@ -50,6 +50,13 @@ builder.Services.AddAuthentication().AddFacebook(options =>
     options.ClientSecret = FACEBOOK_CLIENT_SECRET;
 });
 
+builder.Services.AddAuthentication().AddTwitter(options =>
+{
+    options.ConsumerKey = builder.Configuration["Authentication:Twitter:ApiKey"];
+    options.ConsumerSecret = builder.Configuration["Authentication:Twitter:ApiKeySecret"]; 
+});
+
+
 // Identity
 builder.Services.AddDefaultIdentity<User>(options =>
 {

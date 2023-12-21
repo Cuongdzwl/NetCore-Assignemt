@@ -10,3 +10,4 @@ namespace NetCore_Assignemt.Services.DTO
         public double SubTotal {  get; set; }
     }
 }
+
