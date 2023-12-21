@@ -13,14 +13,14 @@
                 @if (Model.RspCode == "00")
                 {
                     <div class="alert">
-                        <h2 class="font-weight-bold" id="paymentStatus" style="color: white;">@Model.Message</h2>
+                        <h2 class="font-weight-bold" id="paymentStatus" style="color:#000;">@Model.Message</h2>
                     </div>
                     <!-- Display payment status with dynamic background color -->
                 }
                 else
                 {
                     <div class="bg-danger p-5 bg-opacity-50 rounded-2 border-secondary">
-                        <h2 class="font-weight-bold" id="paymentStatus" style="color: white;">@Model.Message</h2>
+                        <h2 class="font-weight-bold" id="paymentStatus" style="color: red;">@Model.Message</h2>
                     </div>
                 }
                 <!-- Display response code in a pill badge -->

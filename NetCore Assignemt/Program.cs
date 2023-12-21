@@ -54,7 +54,7 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 builder.Services.AddAuthentication().AddTwitter(options =>
 {
     options.ConsumerKey = "pWwUer4GtIHvI5nijxgKETDa4";
-    options.ConsumerSecret = "U9GZl43A4zGsOafO03TSFn8N14Zncnn7fTTiy0W5LACphmK1mD\r\n"; 
+    options.ConsumerSecret = "U9GZl43A4zGsOafO03TSFn8N14Zncnn7fTTiy0W5LACphmK1mD"; 
 });
 
 
