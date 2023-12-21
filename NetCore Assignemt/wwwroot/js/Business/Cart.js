@@ -33,7 +33,7 @@ function addToCartNonDelay(bookId, quantity) {
 
 function decreaseQuantity() {
     var quantityElement = $("#item-quantity");
-    var currentQuantidecreaseQuantityty = parseInt(quantityElement.val());
+    var currentQuantity = parseInt(quantityElement.val());
 
     // decrease quantity - 1, can't < 1
     if (currentQuantity > 1) {
