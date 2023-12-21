@@ -1,4 +1,4 @@
-﻿@model NetCore_Assignemt.Models.Order
+﻿@model NetCore_Assignemt.Services.DTO.OrderDTO
 
 @{
     ViewData["Title"] = "Details";
@@ -20,54 +20,74 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Total)
+            Total
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Total)
+            @Model.Order.Total
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
+            Status
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
+            @switch (Model.Order.Status)
+            {
+                case -1:
+                    <span class="badge rounded-pill badge-danger" style="background-color:#C62828">Canceled</span>
+                    break;
+                case 0:
+                    <span class="badge rounded-pill badge-warning" style="background-color:#FF9800">Pending</span>
+
+                    break;
+                case 1:
+                    <span class="badge rounded-pill badge-secondary" style="background-color:#673AB7">Packaging</span>
+                    break;
+                case 2:
+                    <span class="badge rounded-pill badge-primary" style="background-color:#26C6DA">Shipping</span>
+
+                    break;
+                case 3:
+                    <span class="badge rounded-pill badge-success" style="background-color:#388E3C">Completed</span>
+                    break;
+            }
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDate)
+            Created Date
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
+            @Model.Order.CreatedDate
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PaymentTranId)
+            Payment Transaction Id
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PaymentTranId)
+            @Model.Order.PaymentTranId
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BankCode)
+            Bank Code
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BankCode)
+            @Model.Order.BankCode
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PayStatus)
+            Pay Status
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PayStatus)
+            @Model.Order.PayStatus    
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
+            User Name
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
+            @Model.User.UserName
         </dd>
+
     </dl>
 </div>
 <div>
-    <button class="btn btn-danger" onclick="cancelOrder(@Model.Id)">Cancel Order</button> |
+    <button class="btn btn-danger" onclick="cancelOrder(@Model.Order.Id)">Cancel Order</button> |
     @if (User.IsInRole("Admin") || User.IsInRole("Mod"))
     {
-        <button class="btn btn-success" onclick="nextStage(@Model.Id)">Move to Next Stage</button>
+        <button class="btn btn-success" onclick="NextStage(@Model.Order.Id)">Move to Next Stage</button>
         <a asp-action="Index" class="btn btn-dark">Back to List</a>
     }
     else

@@ -62,6 +62,7 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account
             {
                 return NotFound($"Unable to load user with email '{email}'.");
             }
+
             await _userManager.AddToRoleAsync(user, "User");
             Email = email;
             // sennd email
