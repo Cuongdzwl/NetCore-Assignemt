@@ -118,6 +118,10 @@ else
     app.UseHsts();
 }
 
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -135,3 +139,4 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
