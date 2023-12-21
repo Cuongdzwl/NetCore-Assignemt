@@ -4,31 +4,27 @@
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<script src="https://peterolson.github.io/BigInteger.js/BigInteger.min.js"></script>
-
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
 <script src="~/js/Business/Order.js"></script>
 <h1>Details</h1>
- <!-- Single Page Header start -->
-        <div class="container-fluid page-header py-5">
-            <h1 class="text-center text-white display-6">Order Management</h1>
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Order Management</h1>
 
-        </div>
+</div>
 <!-- Single Page Header End -->
 <div class="m-2 ps-2 pe-2">
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             Total
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Model.Order.Total
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             Status
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @switch (Model.Order.Status)
             {
                 case -1:
@@ -50,37 +46,65 @@
                     break;
             }
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             Created Date
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Model.Order.CreatedDate
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             Payment Transaction Id
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Model.Order.PaymentTranId
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             Bank Code
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Model.Order.BankCode
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             Pay Status
         </dt>
-        <dd class = "col-sm-10">
-            @Model.Order.PayStatus    
+        <dd class="col-sm-10">
+            @Model.Order.PayStatus
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             User Name
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Model.User.UserName
         </dd>
-
+        <dt class="col-sm-2">
+            Address
+        </dt>
+        <dd class="col-sm-10">
+            @Model.User.Address, @Model.User.District, @Model.User.City
+        </dd>
+        <dt class="col-sm-2">
+            Phone Number
+        </dt>
+        <dd class="col-sm-10">
+            @Model.User.PhoneNumber
+        </dd>
+    </dl>
+    <h3><b>Book ordered</b></h3>
+    <dl>
+        @if(Model.OrderDetails == null)
+        {
+            <p> Some thing wrong</p>
+        }
+        @foreach(var item in Model.OrderDetails)
+        {
+            
+        <dt class="col-sm-2">
+            @item.Book.Title
+        </dt>
+        <dd class="col-sm-10">
+            <span>x </span>item.Quantity
+        </dd>
+        }
     </dl>
 </div>
 <div>

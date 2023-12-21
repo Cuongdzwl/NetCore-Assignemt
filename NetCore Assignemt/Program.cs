@@ -23,6 +23,7 @@ const string GOOGLE_CLIENT_ID = "1027305466602-6ta3futotkkv4646klci1r1bjj9agama.
 const string FACEBOOK_CLIENT_SECRET = "21bbfc0d23bb25d3ecd68f15f16f4c19";
 const string FACEBOOK_CLIENT_ID = "190652060774363";
 
+const string BREVO_API = "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";
 /////////////////////////////////////////////////////////////////////////////////////////////////
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,8 +53,8 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 
 builder.Services.AddAuthentication().AddTwitter(options =>
 {
-    options.ConsumerKey = builder.Configuration["Authentication:Twitter:ApiKey"];
-    options.ConsumerSecret = builder.Configuration["Authentication:Twitter:ApiKeySecret"]; 
+    options.ConsumerKey = "pWwUer4GtIHvI5nijxgKETDa4";
+    options.ConsumerSecret = "U9GZl43A4zGsOafO03TSFn8N14Zncnn7fTTiy0W5LACphmK1mD\r\n"; 
 });
 
 
@@ -85,7 +86,7 @@ builder.Services.AddSession(options =>
 
 //Email
 builder.Services.AddTransient<IEmailSender, EmailSender>();
-sib_api_v3_sdk.Client.Configuration.Default.AddApiKey("api-key", builder.Configuration["BrevoSMTP:api_key"]);
+sib_api_v3_sdk.Client.Configuration.Default.AddApiKey("api-key", BREVO_API);
 
 //Payment
 builder.Services.AddScoped<IVnPayServices,VnPayServices>();
