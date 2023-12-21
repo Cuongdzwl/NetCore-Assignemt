@@ -20,9 +20,12 @@ const string LOCAL_CONNECTION_STRING = "DefaultConnection";
 const string GOOGLE_CLIENT_SECRET = "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";
 const string GOOGLE_CLIENT_ID = "1027305466602-6ta3futotkkv4646klci1r1bjj9agama.apps.googleusercontent.com";
 // Facebook
-const string FACEBOOK_CLIENT_SECRET = "21bbfc0d23bb25d3ecd68f15f16f4c19";
-const string FACEBOOK_CLIENT_ID = "190652060774363";
+const string FACEBOOK_CLIENT_SECRET = "bb0bc7fcdc0344575d2131530b6b8c3d";
+const string FACEBOOK_CLIENT_ID = "3682826011964025";
 
+const string BREVO_API = "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";
+//"AppId": "3682826011964025",
+//      "AppSecret": "bb0bc7fcdc0344575d2131530b6b8c3d"
 /////////////////////////////////////////////////////////////////////////////////////////////////
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,7 +51,15 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 {
     options.ClientId = FACEBOOK_CLIENT_ID;
     options.ClientSecret = FACEBOOK_CLIENT_SECRET;
+    options.CallbackPath = "/signin-facebook";
 });
+
+builder.Services.AddAuthentication().AddTwitter(options =>
+{
+    options.ConsumerKey = "pWwUer4GtIHvI5nijxgKETDa4";
+    options.ConsumerSecret = "U9GZl43A4zGsOafO03TSFn8N14Zncnn7fTTiy0W5LACphmK1mD"; 
+});
+
 
 // Identity
 builder.Services.AddDefaultIdentity<User>(options =>
@@ -78,7 +89,7 @@ builder.Services.AddSession(options =>
 
 //Email
 builder.Services.AddTransient<IEmailSender, EmailSender>();
-sib_api_v3_sdk.Client.Configuration.Default.AddApiKey("api-key", builder.Configuration["BrevoSMTP:api_key"]);
+sib_api_v3_sdk.Client.Configuration.Default.AddApiKey("api-key", BREVO_API);
 
 //Payment
 builder.Services.AddScoped<IVnPayServices,VnPayServices>();
@@ -111,6 +122,10 @@ else
     app.UseHsts();
 }
 
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -128,3 +143,4 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+

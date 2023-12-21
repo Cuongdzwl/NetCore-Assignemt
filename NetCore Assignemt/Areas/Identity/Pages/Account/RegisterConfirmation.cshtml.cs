@@ -49,6 +49,7 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnGetAsync(string email, string returnUrl = null)
         {
+
             if (email == null)
             {
                 return RedirectToPage("/Index");
@@ -56,11 +57,13 @@ namespace NetCore_Assignemt.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
 
             var user = await _userManager.FindByEmailAsync(email);
+
             if (user == null)
             {
                 return NotFound($"Unable to load user with email '{email}'.");
             }
 
+            await _userManager.AddToRoleAsync(user, "User");
             Email = email;
             // sennd email
             var userId = await _userManager.GetUserIdAsync(user);

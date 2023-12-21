@@ -46,20 +46,45 @@ namespace NetCore_Assignemt.Controllers
         // GET: Orders/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null || _context.Order == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null || _context.Order == null) return NotFound();
+            // Fetch Data
             var order = await _context.Order
                 .Include(o => o.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (order == null)
-            {
-                return NotFound();
-            }
 
-            return View(order);
+            if (order == null) return NotFound();
+
+            var orderdetail = await _context.OrderDetail.Include(c => c.Book).Where(c => c.OrderId == order.Id).ToListAsync();
+            var userinfo = await _context.Users.FirstOrDefaultAsync(c => c.Id == order.UserId);
+            var transaction = await _context.Transaction.FirstOrDefaultAsync(c => c.Id == order.PaymentTranId);
+
+            // order detail dto contain book data
+
+            if (orderdetail == null) return NotFound();
+
+            OrderDTO detail = new OrderDTO
+            {
+                Order = order,
+                Transaction = transaction,
+                User = userinfo,
+                OrderDetails = orderdetail.Where(c => c.Book != null) // Filter out items without a corresponding Book
+                  .Select(c => new OrderDetailDTO
+                  {
+                      Price = c.Book.Price,
+                      Quantity = c.Quantity,
+                      Book = new BookDTO
+                      {
+                          BookId = c.Book.BookId,
+                          Title = c.Book.Title,
+                          Description = c.Book.Description,
+                          Price = c.Book.Price,
+                          ImagePath = c.Book.ImagePath,
+                          Publisher = c.Book.Publisher
+                      }
+                  }).ToList()
+            };
+
+            return View(detail);
         }
 
         //// GET: Orders/Create
@@ -292,10 +317,10 @@ namespace NetCore_Assignemt.Controllers
 
             if (_payment.CallBackValidate(callback, rawUrl))
             {
-                //var result = UpdateOrderInfo(callback);
-                string message;
-                VnPayServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
-                var result = new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
+                var result = UpdateOrderInfo(callback);
+                //string message;
+                //VnPayServices.RETURN_RESPONSE_DICTIONARY.TryGetValue(callback.vnp_ResponseCode, out message);
+                //var result = new PaymentResponseDTO { RspCode = callback.vnp_ResponseCode, Message = message };
                 return View("Return", result);
             }
             // Unvalidate 
@@ -303,29 +328,33 @@ namespace NetCore_Assignemt.Controllers
         }
 
         // Server to Server
-        [HttpGet]
-        [Route("/IPN")]
+        [HttpGet("/ipn")]
+        [AllowAnonymous]
         public async Task<IActionResult> IPN([FromQuery] VnPayCallbackDTO callback)
         {
-            // Debug WIP
-            _logger.LogInformation("IPN Catched: " + HttpContext.Request.QueryString);
-
-            string rawUrl = HttpContext.Request.QueryString + "";
-            // Get order info
-            var order = await _context.Order.FirstOrDefaultAsync(c => c.Id == callback.vnp_TxnRef);
-
-            // Encoding Response
-            using (var result = new StringContent(_payment.InstantPaymentNotification(callback, rawUrl, order), System.Text.Encoding.UTF8, "application/json"))
+            try
             {
+                // Debug WIP
+                _logger.LogInformation("IPN Catched: " + HttpContext.Request.QueryString);
+
+                string rawUrl = HttpContext.Request.QueryString + "";
+                // Get order info
+                var order = await _context.Order.FirstOrDefaultAsync(c => c.Id == callback.vnp_TxnRef);
+
+                // Encoding Response
                 HttpContext.Response.Clear();
-                HttpContext.Response.WriteAsJsonAsync(result);
-                _logger.LogInformation(result.ToString());
-                UpdateOrderInfo(callback);
+                using (var result = new StringContent(_payment.InstantPaymentNotification(callback, rawUrl, order), System.Text.Encoding.UTF8, "application/json"))
+                {
+                    UpdateOrderInfo(callback);
+                    _logger.LogInformation(result.ToString());
+                    return Ok(result);
+                }
             }
-
-            HttpContext.Response.Body.Close();
-
-            return Ok();
+            catch (Exception e)
+            {
+                _logger.LogInformation(e.ToString());
+                return BadRequest();
+            }
         }
 
         [HttpPost]
