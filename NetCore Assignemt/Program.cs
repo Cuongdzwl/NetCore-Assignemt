@@ -22,6 +22,8 @@ const string GOOGLE_CLIENT_ID = "1027305466602-6ta3futotkkv4646klci1r1bjj9agama.
 // Facebook
 const string FACEBOOK_CLIENT_SECRET = "bb0bc7fcdc0344575d2131530b6b8c3d";
 const string FACEBOOK_CLIENT_ID = "3682826011964025";
+
+const string BREVO_API = "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";
 //"AppId": "3682826011964025",
 //      "AppSecret": "bb0bc7fcdc0344575d2131530b6b8c3d"
 /////////////////////////////////////////////////////////////////////////////////////////////////
