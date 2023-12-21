@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NetCore_Assignemt.Data;
 using NetCore_Assignemt.Models;
@@ -17,6 +18,7 @@ namespace NetCore_Assignemt.Controllers
             this._db = db;
             _logger = logger;
         }
+       
         private List<Book> GetAllProducts()
         {
             return _db.Book.ToList();
@@ -33,6 +35,7 @@ namespace NetCore_Assignemt.Controllers
 
             return View();
         }
+       
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _db.Book == null)
@@ -49,7 +52,18 @@ namespace NetCore_Assignemt.Controllers
 
             return View(book);
         }
-
+        public IActionResult SearchString(string SearchString)
+        {
+            var books = _db.Book
+         .Where(b => b.Title.Contains(SearchString))
+         .Include(b => b.BookAuthors)
+         .Include(b => b.BookCategories)
+         .Include(b => b.BookCategories.Categories)
+         .Include(b => b.BookAuthors.Authors)
+         .ToList();
+            ViewBag.Book = books;
+            return View("Index", SearchString);
+        }
         public IActionResult Privacy()
         {
             return View();

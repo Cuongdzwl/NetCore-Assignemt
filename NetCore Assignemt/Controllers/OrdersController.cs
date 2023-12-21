@@ -46,20 +46,45 @@ namespace NetCore_Assignemt.Controllers
         // GET: Orders/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null || _context.Order == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null || _context.Order == null) return NotFound();
+            // Fetch Data
             var order = await _context.Order
                 .Include(o => o.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (order == null)
-            {
-                return NotFound();
-            }
 
-            return View(order);
+            if (order == null) return NotFound();
+
+            var orderdetail = await _context.OrderDetail.Include(c => c.Book).Where(c => c.OrderId == order.Id).ToListAsync();
+            var userinfo = await _context.Users.FirstOrDefaultAsync(c => c.Id == order.UserId);
+            var transaction = await _context.Transaction.FirstOrDefaultAsync(c => c.Id == order.PaymentTranId);
+
+            // order detail dto contain book data
+
+            if (orderdetail == null) return NotFound();
+
+            OrderDTO detail = new OrderDTO
+            {
+                Order = order,
+                Transaction = transaction,
+                User = userinfo,
+                OrderDetails = orderdetail.Where(c => c.Book != null) // Filter out items without a corresponding Book
+                  .Select(c => new OrderDetailDTO
+                  {
+                      Price = c.Book.Price,
+                      Quantity = c.Quantity,
+                      Book = new BookDTO
+                      {
+                          BookId = c.Book.BookId,
+                          Title = c.Book.Title,
+                          Description = c.Book.Description,
+                          Price = c.Book.Price,
+                          ImagePath = c.Book.ImagePath,
+                          Publisher = c.Book.Publisher
+                      }
+                  }).ToList()
+            };
+
+            return View(detail);
         }
 
         //// GET: Orders/Create

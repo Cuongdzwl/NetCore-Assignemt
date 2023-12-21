@@ -20,9 +20,10 @@ const string LOCAL_CONNECTION_STRING = "DefaultConnection";
 const string GOOGLE_CLIENT_SECRET = "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";
 const string GOOGLE_CLIENT_ID = "1027305466602-6ta3futotkkv4646klci1r1bjj9agama.apps.googleusercontent.com";
 // Facebook
-const string FACEBOOK_CLIENT_SECRET = "21bbfc0d23bb25d3ecd68f15f16f4c19";
-const string FACEBOOK_CLIENT_ID = "190652060774363";
-
+const string FACEBOOK_CLIENT_SECRET = "bb0bc7fcdc0344575d2131530b6b8c3d";
+const string FACEBOOK_CLIENT_ID = "3682826011964025";
+//"AppId": "3682826011964025",
+//      "AppSecret": "bb0bc7fcdc0344575d2131530b6b8c3d"
 /////////////////////////////////////////////////////////////////////////////////////////////////
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,7 @@ builder.Services.AddAuthentication().AddFacebook(options =>
 {
     options.ClientId = FACEBOOK_CLIENT_ID;
     options.ClientSecret = FACEBOOK_CLIENT_SECRET;
+    options.CallbackPath = "/sigin-facbook";
 });
 
 builder.Services.AddAuthentication().AddTwitter(options =>
